@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+
+#include "../rng.h"
+#include "../rlwe_mife.h"
+
+#define N_TESTS 1
+
+long long cpucycles(void)
+{
+	unsigned long long result;
+	asm volatile(".byte 15;.byte 49;shlq $32,%%rdx;orq %%rdx,%%rax"
+		: "=a" (result) ::  "%rdx");
+	return result;
+}
+
+void
+fprintBstr(char *S, unsigned char *A, unsigned long long L)
+{
+	unsigned long long  i;
+
+	printf("%s", S);
+
+	for ( i=0; i<L; i++ )
+		printf("%02X", A[i]);
+
+	if ( L == 0 )
+		printf("00");
+
+	printf("\n");
+}
+
+
+int test_rlwe_mife()
+{
+	// Declarate variables
+	uint32_t mpk[MIFE_L+1][MIFE_NMODULI][MIFE_N];
+	uint32_t msk[MIFE_L][MIFE_NMODULI][MIFE_N];
+	uint32_t c[MIFE_L+1][MIFE_NMODULI][MIFE_N];
+	uint32_t y[MIFE_L][MIFE_NMODULI][MIFE_N];
+	uint32_t sk_y[MIFE_NMODULI][MIFE_N];
+	uint32_t d_y[MIFE_NMODULI][MIFE_N];
+	//XXX - message alredy in the CRT domain?
+	uint32_t m[MIFE_L][MIFE_NMODULI][MIFE_N];
+
+
+	unsigned char entropy_input[48];
+
+	uint64_t i, j;
+	uint64_t CLOCK1, CLOCK2;
+	uint64_t CLOCK_su, CLOCK_enc, CLOCK_kp, CLOCK_dec;
+
+	CLOCK1 = 0;
+	CLOCK2 = 0;
+	CLOCK_su = CLOCK_kp = CLOCK_enc = CLOCK_dec = 0;
+
+	time_t t;
+	// Intializes random number generator
+	srand((unsigned) time(&t));
+
+	for (i=0; i<48; i++){
+		//entropy_input[i] = rand()%256;
+		entropy_input[i] = i;
+	}
+	randombytes_init(entropy_input, NULL, 256);
+
+	// Print parameters
+	printf("MIFE_Q1=%d\n", MIFE_Q1);
+	printf("MIFE_Q2=%d\n", MIFE_Q2);
+	printf("MIFE_Q=%lu\n", MIFE_Q);
+	printf("\n");
+
+	for(i = 0; i < N_TESTS; i++) {
+		printf("i : %lu\n",i);
+
+		//Generation of master secret key sk and master public key pk pair
+		CLOCK1=cpucycles();
+		rlwe_mife_setup(mpk, msk);
+		CLOCK2=cpucycles();	
+		CLOCK_su += (CLOCK2-CLOCK1);
+
+		//Encryption of the message m
+		CLOCK1=cpucycles();
+		rlwe_mife_encrypt(m, mpk, c);
+		CLOCK2=cpucycles();	
+		CLOCK_enc += (CLOCK2-CLOCK1);
+
+		//Generation of the key for decrypting m·y
+		// TODO: which y is chosen??
+		CLOCK1=cpucycles();
+		rlwe_mife_keygen(y, msk, sk_y);
+		CLOCK2=cpucycles();	
+		CLOCK_kp += (CLOCK2-CLOCK1);
+
+		//Decryption of m·y
+		CLOCK1=cpucycles();
+		rlwe_mife_decrypt(c, y, sk_y, d_y);
+		CLOCK2=cpucycles();	
+		CLOCK_dec += (CLOCK2-CLOCK1);
+
+		// Functional verification:
+		// TODO
+		// ...
+		//printf("\n");
+	}
+
+	printf("Repeat is : %ld\n",N_TESTS);
+	printf("Average times setup \t %lu \n", CLOCK_su/N_TESTS);
+	printf("Average times enc: \t %lu \n",CLOCK_enc/N_TESTS);
+	printf("Average times key_pair: \t %lu \n",CLOCK_kp/N_TESTS);
+	printf("Average times dec: \t %lu \n",CLOCK_dec/N_TESTS);
+
+	return 0;
+}
+
+int main()
+{
+	test_rlwe_mife();
+	return 0;
+}
