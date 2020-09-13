@@ -46,7 +46,6 @@ int test_rlwe_mife()
 	//XXX - message alredy in the CRT domain?
 	uint32_t m[MIFE_L][MIFE_NMODULI][MIFE_N];
 
-
 	unsigned char entropy_input[48];
 
 	uint64_t i, j;
@@ -67,6 +66,7 @@ int test_rlwe_mife()
 	}
 	randombytes_init(entropy_input, NULL, 256);
 
+
 	// Print parameters
 	printf("MIFE_Q1=%d\n", MIFE_Q1);
 	printf("MIFE_Q2=%d\n", MIFE_Q2);
@@ -81,12 +81,14 @@ int test_rlwe_mife()
 		rlwe_mife_setup(mpk, msk);
 		CLOCK2=cpucycles();	
 		CLOCK_su += (CLOCK2-CLOCK1);
-
+		printf("Keysetup done \n");
+	
 		//Encryption of the message m
 		CLOCK1=cpucycles();
 		rlwe_mife_encrypt(m, mpk, c);
 		CLOCK2=cpucycles();	
 		CLOCK_enc += (CLOCK2-CLOCK1);
+		printf("Encryption done \n");
 
 		//Generation of the key for decrypting m·y
 		// TODO: which y is chosen??
@@ -94,12 +96,14 @@ int test_rlwe_mife()
 		rlwe_mife_keygen(y, msk, sk_y);
 		CLOCK2=cpucycles();	
 		CLOCK_kp += (CLOCK2-CLOCK1);
+		printf("Keygen done \n");
 
 		//Decryption of m·y
 		CLOCK1=cpucycles();
 		rlwe_mife_decrypt(c, y, sk_y, d_y);
 		CLOCK2=cpucycles();	
 		CLOCK_dec += (CLOCK2-CLOCK1);
+		printf("Decrypt done \n");
 
 		// Functional verification:
 		// TODO
@@ -118,6 +122,7 @@ int test_rlwe_mife()
 
 int main()
 {
+
 	test_rlwe_mife();
 	return 0;
 }
