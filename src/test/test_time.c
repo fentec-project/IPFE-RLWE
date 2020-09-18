@@ -53,7 +53,7 @@ int test_rlwe_mife()
 
 	unsigned char entropy_input[48];
 
-	uint64_t i, j;
+	uint64_t i, j, k;
 	uint64_t CLOCK1, CLOCK2;
 	uint64_t CLOCK_su, CLOCK_enc, CLOCK_kp, CLOCK_dec;
 
@@ -71,13 +71,19 @@ int test_rlwe_mife()
 	}
 	randombytes_init(entropy_input, NULL, 256);
 
-	// TODO: which message and y is chosen??
-
 	// Print parameters
 	printf("MIFE_Q1=%d\n", MIFE_Q1);
 	printf("MIFE_Q2=%d\n", MIFE_Q2);
 	printf("MIFE_Q=%lu\n", MIFE_Q);
 	printf("\n");
+
+	// Sample message and y
+	//m[0] = MIFE_B-1;
+	//y[1] = MIFE_B-1;
+	for (i = 0; i < MIFE_L; ++i) {
+		m[i] = 1;
+		y[i] = 1;
+	}
 
 	for(i = 0; i < N_TESTS; i++) {
 		printf("i : %lu\n",i);
@@ -127,11 +133,11 @@ int test_rlwe_mife()
 		crt_convert_generic(y, y_crt, MIFE_L);
 		uint64_t mxm;
 		mxm = 0;
-		for (i = 0; i < MIFE_L; ++i) {
+		for (k = 0; k < MIFE_L; ++k) {
 			for (j = 0; j < MIFE_NMODULI; ++j) {
-				//mxm = (uint64_t)m_crt[j][i] * y_crt;
-				//mxm = (uint64_t)m_crt[j][i] * MIFE_SCALE_M_MOD_Q_I[j];
-				//m_crt[j][i] = mod_red(mxm, MIFE_MOD_Q_I[j]);
+				//mxm = (uint64_t)m_crt[j][k] * y_crt;
+				//mxm = (uint64_t)m_crt[j][k] * MIFE_SCALE_M_MOD_Q_I[j];
+				//m_crt[j][k] = mod_red(mxm, MIFE_MOD_Q_I[j]);
 			}
 		}
 		printf("TEST %lu DONE!\n", i);

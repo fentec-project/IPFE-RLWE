@@ -39,19 +39,40 @@ void
 sample_sigma1
 (uint64_t a[MIFE_N])
 {
-	sample_uniform(a);
+	int i;
+	uint64_t num;
+	for (i = 0; i < MIFE_N; ++i) {
+		do {
+			num = rand() & 0xF;
+		} while (num >= MIFE_SIGMA1);
+		a[i] = num;
+	}
 }
 
 void
 sample_sigma2
 (uint64_t a[MIFE_N])
 {
-	sample_uniform(a);
+	int i;
+	uint64_t num;
+	for (i = 0; i < MIFE_N; ++i) {
+		do {
+			num = rand() & 0xF;
+		} while (num >= MIFE_SIGMA2);
+		a[i] = num;
+	}
 }
 
 void
 sample_sigma3
 (uint64_t a[MIFE_N])
 {
-	sample_uniform(a);
+	int i;
+	uint64_t num;
+	for (i = 0; i < MIFE_N; ++i) {
+		do {
+			num = rand() & 0xF;
+		} while (num >= MIFE_SIGMA3);
+		a[i] = num;
+	}
 }

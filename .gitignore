@@ -4,4 +4,6 @@
 *.elf
 *.a
 *.d
+src/test/test_poly_mul
+src/test/test_time
 

@@ -47,8 +47,8 @@ static const uint64_t MIFE_SCALE_M_MOD_Q_I[MIFE_NMODULI] = {(MIFE_SCALE_M % MIFE
 //sigma1 = sqrt(2l)*B*sigma
 //sigma2 = sqrt(2)*sigma
 //sigma3 = sqrt(2(n*l*sigma2²*log(1/epsilon)+1)*sigma1
-#define MIFE_SIGMA1
-#define MIFE_SIGMA2
-#define MIFE_SIGMA3
+#define MIFE_SIGMA1 10
+#define MIFE_SIGMA2 10
+#define MIFE_SIGMA3 10
 
 #endif
