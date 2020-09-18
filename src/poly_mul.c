@@ -72,6 +72,48 @@ poly_mul_mac_mod
 }
 
 
+void
+ntt
+(uint32_t * a)
+{
+	//TODO
+}
+
+void
+invntt
+(uint32_t * a)
+{
+	//TODO
+}
+
+void
+poly_mul_mod_ntt
+(const uint32_t a[MIFE_N], const uint32_t b[MIFE_N], uint32_t c[MIFE_N], const uint32_t mod)
+{
+	int i;
+	uint64_t mac;
+	uint32_t a_ntt[MIFE_N], b_ntt[MIFE_N], c_ntt[MIFE_N];
+	for (i = 0; i < MIFE_N; ++i) {
+		a_ntt[i] = a[i];
+		b_ntt[i] = b[i];
+	}
+	//Direct NTT transform
+	ntt(a_ntt);
+	ntt(b_ntt);
+	//Pointwise multiplication in NTT domain
+	for (i = 0; i < MIFE_N; ++i) {
+		mac = (uint64_t)a_ntt[i]*b_ntt[i];
+		c_ntt[i] = mod_red(mac, mod);
+	}
+	//Reverse NTT transform
+	invntt(c_ntt);
+	for (i = 0; i < MIFE_N; ++i) {
+		c[i] = c_ntt[i];
+	}
+}
+
+
+
 static
 void
 fprintPoly_small_gp(char * s, uint32_t * a, int n, uint64_t mod)

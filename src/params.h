@@ -42,6 +42,8 @@ static const uint64_t MIFE_CRT_REVERSE_I[MIFE_NMODULI] = {MIFE_CRT_X1, MIFE_CRT_
 //floor(q/p)
 #define MIFE_SCALE_M (MIFE_Q/MIFE_P)
 
+static const uint64_t MIFE_SCALE_M_MOD_Q_I[MIFE_NMODULI] = {(MIFE_SCALE_M % MIFE_Q1), (MIFE_SCALE_M % MIFE_Q2)};
+
 //sigma1 = sqrt(2l)*B*sigma
 //sigma2 = sqrt(2)*sigma
 //sigma3 = sqrt(2(n*l*sigma2²*log(1/epsilon)+1)*sigma1

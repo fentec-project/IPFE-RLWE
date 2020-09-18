@@ -15,7 +15,7 @@
 #include "../poly_mul.h"
 #include "../sample.h"
 
-#define N_TESTS 10
+#define N_TESTS 3
 
 long long cpucycles(void)
 {
@@ -195,6 +195,8 @@ int test_rlwe_mife_poly_mul()
 	// Declarate variables
 	uint64_t a[MIFE_N], b[MIFE_N], c_ref[MIFE_N], c[MIFE_N], a_crt_inv[MIFE_N];
 	uint32_t a_crt[MIFE_NMODULI][MIFE_N], b_crt[MIFE_NMODULI][MIFE_N], c_crt[MIFE_NMODULI][MIFE_N];
+	uint32_t c_crt_ntt[MIFE_NMODULI][MIFE_N];
+	uint64_t c_ntt[MIFE_N];
 
 	unsigned char entropy_input[48];
 
@@ -461,6 +463,7 @@ int test_rlwe_mife_poly_mul()
 			//fprintPoly_small("b = ", b_crt[j],10);
 			//fprintPoly_small("c_pre = ", c_crt[j],10);
 			poly_mul_mod(a_crt[j], b_crt[j], c_crt[j], MIFE_MOD_Q_I[j]);
+			poly_mul_mod_ntt(a_crt[j], b_crt[j], c_crt_ntt[j], MIFE_MOD_Q_I[j]);
 			//fprintPoly_small("c_post = ", c_crt[j],10);
 //			fprintPoly_small_gp("c_crt = ", c_crt[j], 4, MIFE_MOD_Q_I[j]);
 		}
@@ -472,6 +475,7 @@ int test_rlwe_mife_poly_mul()
 		//fprintPoly_small("c2 = ", c_crt[1],10);
 		CLOCK1=cpucycles();
 		crt_reverse(c, c_crt);
+		crt_reverse(c_ntt, c_crt_ntt);
 		CLOCK2=cpucycles();
 		CLOCK_dec += (CLOCK2-CLOCK1);
 		//fprintPoly("c = ", c, 10);
@@ -482,6 +486,11 @@ int test_rlwe_mife_poly_mul()
 		for (j = 0; j < MIFE_N; ++j) {
 			if (c[j] != c_ref[j]) {
 				printf("c_ref = %ld --- c = %ld\n", c_ref[j], c[j]);
+				printf("Error at iteration %ld\n", j);
+				break;
+			}
+			if (c_ntt[j] != c_ref[j]) {
+				printf("c_ref = %ld --- c_ntt = %ld\n", c_ref[j], c_ntt[j]);
 				printf("Error at iteration %ld\n", j);
 				break;
 			}

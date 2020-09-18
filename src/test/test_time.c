@@ -40,11 +40,16 @@ int test_rlwe_mife()
 	uint32_t mpk[MIFE_L+1][MIFE_NMODULI][MIFE_N];
 	uint32_t msk[MIFE_L][MIFE_NMODULI][MIFE_N];
 	uint32_t c[MIFE_L+1][MIFE_NMODULI][MIFE_N];
-	uint32_t y[MIFE_L][MIFE_NMODULI][MIFE_N];
 	uint32_t sk_y[MIFE_NMODULI][MIFE_N];
 	uint32_t d_y[MIFE_NMODULI][MIFE_N];
-	//XXX - message alredy in the CRT domain?
-	uint32_t m[MIFE_L][MIFE_NMODULI][MIFE_N];
+
+	uint32_t m[MIFE_L];
+	uint32_t y[MIFE_L];
+
+	uint32_t m_crt[MIFE_NMODULI][MIFE_L];
+	uint32_t y_crt[MIFE_NMODULI][MIFE_L];
+
+	uint64_t dy[MIFE_N];
 
 	unsigned char entropy_input[48];
 
@@ -66,6 +71,7 @@ int test_rlwe_mife()
 	}
 	randombytes_init(entropy_input, NULL, 256);
 
+	// TODO: which message and y is chosen??
 
 	// Print parameters
 	printf("MIFE_Q1=%d\n", MIFE_Q1);
@@ -91,7 +97,6 @@ int test_rlwe_mife()
 		printf("Encryption done \n");
 
 		//Generation of the key for decrypting m·y
-		// TODO: which y is chosen??
 		CLOCK1=cpucycles();
 		rlwe_mife_keygen(y, msk, sk_y);
 		CLOCK2=cpucycles();	
@@ -106,15 +111,36 @@ int test_rlwe_mife()
 		printf("Decrypt done \n");
 
 		// Functional verification:
-		// TODO
-		// ...
-		//printf("\n");
+		crt_reverse(dy, d_y);
+
+		uint64_t xy;
+		xy = 0;
+		for (j = 0; j < MIFE_L; ++j) {
+			xy += (uint64_t)m[j]*y[j];
+		}
+		xy = xy*MIFE_SCALE_M;
+
+		printf("xy = %ld and dy = %ld\n",xy,dy[0]);
+
+		// TODO: Double check the result in CRT domain
+		crt_convert_generic(m, m_crt, MIFE_L);
+		crt_convert_generic(y, y_crt, MIFE_L);
+		uint64_t mxm;
+		mxm = 0;
+		for (i = 0; i < MIFE_L; ++i) {
+			for (j = 0; j < MIFE_NMODULI; ++j) {
+				//mxm = (uint64_t)m_crt[j][i] * y_crt;
+				//mxm = (uint64_t)m_crt[j][i] * MIFE_SCALE_M_MOD_Q_I[j];
+				//m_crt[j][i] = mod_red(mxm, MIFE_MOD_Q_I[j]);
+			}
+		}
+		printf("TEST %lu DONE!\n", i);
 	}
 
 	printf("Repeat is : %ld\n",N_TESTS);
 	printf("Average times setup \t %lu \n", CLOCK_su/N_TESTS);
 	printf("Average times enc: \t %lu \n",CLOCK_enc/N_TESTS);
-	printf("Average times key_pair: \t %lu \n",CLOCK_kp/N_TESTS);
+	printf("Average times key_pair: %lu \n",CLOCK_kp/N_TESTS);
 	printf("Average times dec: \t %lu \n",CLOCK_dec/N_TESTS);
 
 	return 0;

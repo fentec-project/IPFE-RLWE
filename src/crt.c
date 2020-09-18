@@ -18,6 +18,19 @@ crt_convert
 	}
 }
 
+void
+crt_convert_generic
+(const uint32_t a[MIFE_L], uint32_t a_crt[MIFE_NMODULI][MIFE_L], const int len)
+{
+	int i, j;
+	for (i = 0; i < len; ++i) {
+		for (j = 0; j < MIFE_NMODULI; ++j) {
+			//a_crt[j][i] = a[i] % MIFE_MOD_Q_I[j];
+			a_crt[j][i] = mod_red(a[i], MIFE_MOD_Q_I[j]);
+		}
+	}
+}
+
 static
 int64_t
 int_mul_mod
