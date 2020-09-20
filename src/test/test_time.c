@@ -7,7 +7,7 @@
 #include "../rng.h"
 #include "../rlwe_mife.h"
 
-#define N_TESTS 1
+#define N_TESTS 3
 
 long long cpucycles(void)
 {
@@ -124,9 +124,9 @@ int test_rlwe_mife()
 		for (j = 0; j < MIFE_L; ++j) {
 			xy += (uint64_t)m[j]*y[j];
 		}
-		xy = xy*MIFE_SCALE_M;
+		//xy = xy*MIFE_SCALE_M;
 
-		printf("xy = %ld and dy = %ld\n",xy,dy[0]);
+		printf("xy = %ld and dy = %ld\n", xy, (MIFE_P*dy[0]/MIFE_Q) );
 
 		// TODO: Double check the result in CRT domain
 		crt_convert_generic(m, m_crt, MIFE_L);
@@ -144,10 +144,10 @@ int test_rlwe_mife()
 	}
 
 	printf("Repeat is : %ld\n",N_TESTS);
-	printf("Average times setup \t %lu \n", CLOCK_su/N_TESTS);
-	printf("Average times enc: \t %lu \n",CLOCK_enc/N_TESTS);
-	printf("Average times key_pair: %lu \n",CLOCK_kp/N_TESTS);
-	printf("Average times dec: \t %lu \n",CLOCK_dec/N_TESTS);
+	printf("Average times setup \t \t %lu \n", CLOCK_su/N_TESTS);
+	printf("Average times enc: \t \t %lu \n",CLOCK_enc/N_TESTS);
+	printf("Average times key_pair: \t %lu \n",CLOCK_kp/N_TESTS);
+	printf("Average times dec: \t \t %lu \n",CLOCK_dec/N_TESTS);
 
 	return 0;
 }

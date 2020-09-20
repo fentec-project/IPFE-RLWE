@@ -9,6 +9,16 @@
 //#define UINT64_RAND_MAX ((RAND_MAX << 32)|RAND_MAX)
 
 void
+sample_zeros
+(uint64_t a[MIFE_N])
+{
+	int i;
+	for (i = 0; i < MIFE_N; ++i) {
+		a[i] = 0;
+	}
+}
+
+void
 sample_ones
 (uint64_t a[MIFE_N])
 {
