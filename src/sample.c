@@ -86,3 +86,17 @@ sample_sigma3
 		a[i] = num;
 	}
 }
+
+void
+sample_message
+(uint64_t a[MIFE_L])
+{
+	int i;
+	uint64_t num;
+	for (i = 0; i < MIFE_L; ++i) {
+		do {
+			num = rand() & (MIFE_B-1);
+		} while (num >= MIFE_B);
+		a[i] = num;
+	}
+}

@@ -7,6 +7,8 @@
 #include "poly_mul.h"
 #include "sample.h"
 
+#include <gmp.h>
+
 void
 rlwe_mife_setup
 (uint32_t mpk[MIFE_L+1][MIFE_NMODULI][MIFE_N], uint32_t msk[MIFE_L][MIFE_NMODULI][MIFE_N])
@@ -24,6 +26,7 @@ rlwe_mife_setup
 	for (i = 0; i < MIFE_L; ++i) {
 		sample_sigma1(s);
 		sample_sigma1(e);
+		//sample_zeros(e);
 		crt_convert(s, msk[i]);
 		crt_convert(e, e_crt);
 		for (j = 0; j < MIFE_NMODULI; ++j) {
@@ -57,6 +60,7 @@ rlwe_mife_encrypt
 	// Sample r, f_0 from D_sigma2
 	sample_sigma2(r);
 	sample_sigma2(f);
+	//sample_zeros(f);
 	// c_0 = a * r + f_0
 	crt_convert(r, r_crt);
 	crt_convert(f, f_crt);
@@ -69,6 +73,7 @@ rlwe_mife_encrypt
 	// c_i = pk_i * r + f_i + (floor(q/p)m_i)1_R
 	for (i = 0; i < MIFE_L; ++i) {
 		sample_sigma3(f);
+		//sample_zeros(f);
 		crt_convert(f, f_crt);
 		for (j = 0; j < MIFE_NMODULI; ++j) {
 			poly_mul_mod(mpk[i][j], r_crt[j], c[i][j], MIFE_MOD_Q_I[j]);
@@ -112,12 +117,13 @@ rlwe_mife_keygen
 
 void
 rlwe_mife_decrypt
-(const uint32_t c[MIFE_L+1][MIFE_NMODULI][MIFE_N], const uint32_t y[MIFE_L], const uint32_t sk_y[MIFE_NMODULI][MIFE_N], uint32_t d_y[MIFE_NMODULI][MIFE_N])
+(const uint32_t c[MIFE_L+1][MIFE_NMODULI][MIFE_N], const uint32_t y[MIFE_L], const uint32_t sk_y[MIFE_NMODULI][MIFE_N], uint64_t dy[MIFE_N])
 {
 	int i, j, k;
 	uint64_t mac;
 
 	uint32_t c0sy[MIFE_NMODULI][MIFE_N];
+	uint32_t d_y[MIFE_NMODULI][MIFE_N];
 
 	uint32_t y_crt[MIFE_NMODULI][MIFE_L];
 
@@ -144,4 +150,35 @@ rlwe_mife_decrypt
 		poly_mul_mod(c[MIFE_L][i], sk_y[i], c0sy[i], MIFE_MOD_Q_I[i]);
 		sub_mod(d_y[i], c0sy[i], d_y[i], MIFE_MOD_Q_I[i]);
 	}
+
+	crt_reverse(dy, d_y);
+}
+
+void
+round_extract
+(uint64_t a[MIFE_N])
+{
+	int i;
+
+	mpz_t quotient, rem, a_i;
+	mpz_init(quotient);
+	mpz_init(rem);
+	mpz_init(a_i);
+
+	for (i = 0; i < MIFE_N; ++i) {
+		mpz_set_ui(a_i, a[i]);
+		mpz_mul_ui(a_i, a_i, MIFE_P);
+		mpz_fdiv_qr_ui(quotient, rem, a_i, MIFE_Q);
+		if( mpz_cmp_ui(rem, (MIFE_Q >> 1)) > 0 ) {
+			mpz_add_ui(quotient, quotient, 1);
+		}
+		a[i] = mpz_get_ui(quotient);
+	}
+	mpz_clear(quotient);
+	mpz_clear(rem);
+	mpz_clear(a_i);
+
+	//for (i = 0; i < MIFE_N; ++i) {
+	//	a[i] = (MIFE_P*a[i])/MIFE_Q;
+	//}
 }

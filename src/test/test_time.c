@@ -7,7 +7,7 @@
 #include "../rng.h"
 #include "../rlwe_mife.h"
 
-#define N_TESTS 3
+#define N_TESTS 5
 
 long long cpucycles(void)
 {
@@ -41,7 +41,7 @@ int test_rlwe_mife()
 	uint32_t msk[MIFE_L][MIFE_NMODULI][MIFE_N];
 	uint32_t c[MIFE_L+1][MIFE_NMODULI][MIFE_N];
 	uint32_t sk_y[MIFE_NMODULI][MIFE_N];
-	uint32_t d_y[MIFE_NMODULI][MIFE_N];
+	//uint32_t d_y[MIFE_NMODULI][MIFE_N];
 
 	uint32_t m[MIFE_L];
 	uint32_t y[MIFE_L];
@@ -55,11 +55,12 @@ int test_rlwe_mife()
 
 	uint64_t i, j, k;
 	uint64_t CLOCK1, CLOCK2;
-	uint64_t CLOCK_su, CLOCK_enc, CLOCK_kp, CLOCK_dec;
+	uint64_t CLOCK_su, CLOCK_enc, CLOCK_kp, CLOCK_dec, CLOCK_extract;
 
 	CLOCK1 = 0;
 	CLOCK2 = 0;
 	CLOCK_su = CLOCK_kp = CLOCK_enc = CLOCK_dec = 0;
+	CLOCK_extract = 0;
 
 	time_t t;
 	// Intializes random number generator
@@ -75,18 +76,15 @@ int test_rlwe_mife()
 	printf("MIFE_Q1=%d\n", MIFE_Q1);
 	printf("MIFE_Q2=%d\n", MIFE_Q2);
 	printf("MIFE_Q=%lu\n", MIFE_Q);
+	printf("Noise tolerance=%lu\n", MIFE_Q/MIFE_P);
 	printf("\n");
-
-	// Sample message and y
-	//m[0] = MIFE_B-1;
-	//y[1] = MIFE_B-1;
-	for (i = 0; i < MIFE_L; ++i) {
-		m[i] = 1;
-		y[i] = 1;
-	}
 
 	for(i = 0; i < N_TESTS; i++) {
 		printf("i : %lu\n",i);
+
+		// Sample message and y
+		sample_message(m);
+		sample_message(y);
 
 		//Generation of master secret key sk and master public key pk pair
 		CLOCK1=cpucycles();
@@ -111,43 +109,34 @@ int test_rlwe_mife()
 
 		//Decryption of m·y
 		CLOCK1=cpucycles();
-		rlwe_mife_decrypt(c, y, sk_y, d_y);
-		CLOCK2=cpucycles();	
+		rlwe_mife_decrypt(c, y, sk_y, dy);
+		CLOCK2=cpucycles();
 		CLOCK_dec += (CLOCK2-CLOCK1);
 		printf("Decrypt done \n");
 
-		// Functional verification:
-		crt_reverse(dy, d_y);
+		//Extraction of the result (cancel scaling)
+		CLOCK1=cpucycles();
+		round_extract(dy);
+		CLOCK2=cpucycles();
+		CLOCK_extract += (CLOCK2-CLOCK1);
+		printf("Extraction done \n");
 
-		uint64_t xy;
-		xy = 0;
+		// Functional verification
+		k = 0;
 		for (j = 0; j < MIFE_L; ++j) {
-			xy += (uint64_t)m[j]*y[j];
+			k += (uint64_t)m[j]*y[j];
 		}
-		//xy = xy*MIFE_SCALE_M;
+		printf("xy = %ld and dy = %ld\n", k, dy[0]);
 
-		printf("xy = %ld and dy = %ld\n", xy, (MIFE_P*dy[0]/MIFE_Q) );
-
-		// TODO: Double check the result in CRT domain
-		crt_convert_generic(m, m_crt, MIFE_L);
-		crt_convert_generic(y, y_crt, MIFE_L);
-		uint64_t mxm;
-		mxm = 0;
-		for (k = 0; k < MIFE_L; ++k) {
-			for (j = 0; j < MIFE_NMODULI; ++j) {
-				//mxm = (uint64_t)m_crt[j][k] * y_crt;
-				//mxm = (uint64_t)m_crt[j][k] * MIFE_SCALE_M_MOD_Q_I[j];
-				//m_crt[j][k] = mod_red(mxm, MIFE_MOD_Q_I[j]);
-			}
-		}
-		printf("TEST %lu DONE!\n", i);
+		printf("TEST %lu DONE!\n\n", i);
 	}
 
 	printf("Repeat is : %ld\n",N_TESTS);
-	printf("Average times setup \t \t %lu \n", CLOCK_su/N_TESTS);
+	printf("Average times setup: \t \t %lu \n", CLOCK_su/N_TESTS);
 	printf("Average times enc: \t \t %lu \n",CLOCK_enc/N_TESTS);
 	printf("Average times key_pair: \t %lu \n",CLOCK_kp/N_TESTS);
 	printf("Average times dec: \t \t %lu \n",CLOCK_dec/N_TESTS);
+	printf("Average times extract: \t \t %lu \n",CLOCK_extract/N_TESTS);
 
 	return 0;
 }

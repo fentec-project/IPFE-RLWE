@@ -24,7 +24,8 @@ sub_mod
 	int i;
 	uint64_t sub;
 	for (i = 0; i < MIFE_N; ++i) {
-		sub = (a[i] - b[i]);
+		sub = mod - b[i];
+		sub = a[i] + sub;
 		c[i] = mod_red(sub, mod);
 	}
 }
@@ -63,7 +64,8 @@ poly_mul_mac_mod
 //		printf("Mod(%ld,%ld)*x^%d + ",res[i],mod,i);
 //	}
 	for (i = MIFE_N; i < 2*MIFE_N-1; ++i) {
-		mac = res[i - MIFE_N] - res[i];
+		mac = mod - res[i];
+		mac = res[i - MIFE_N] + mac;
 		mac = mac + c[i - MIFE_N];
 		c[i - MIFE_N] = mod_red(mac, mod);
 	}

@@ -15,7 +15,7 @@
 #include "../poly_mul.h"
 #include "../sample.h"
 
-#define N_TESTS 3
+#define N_TESTS 10
 
 long long cpucycles(void)
 {
@@ -262,7 +262,7 @@ int test_rlwe_mife_poly_mul()
 
 	printf("\nTest of CRT for integer arithmetic DONE!\n\n");
 */
-#ifdef TEST_ADDITION
+#ifndef TEST_ADDITION
 	printf("\n### TEST POLYNOMIAL ADDITION USING CRT ###\n");
 
 	for (i = 0; i < N_TESTS; ++i) {
@@ -490,8 +490,8 @@ int test_rlwe_mife_poly_mul()
 				break;
 			}
 			if (c_ntt[j] != c_ref[j]) {
-				printf("c_ref = %ld --- c_ntt = %ld\n", c_ref[j], c_ntt[j]);
-				printf("Error at iteration %ld\n", j);
+				//printf("c_ref = %ld --- c_ntt = %ld\n", c_ref[j], c_ntt[j]);
+				//printf("Error at iteration %ld\n", j);
 				break;
 			}
 		}
