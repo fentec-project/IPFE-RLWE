@@ -73,7 +73,7 @@ poly_mul_mac_mod
 	c[MIFE_N-1] =  mod_red(mac, mod);
 }
 
-
+/*
 void
 ntt
 (uint32_t * a)
@@ -113,9 +113,9 @@ poly_mul_mod_ntt
 		c[i] = c_ntt[i];
 	}
 }
+*/
 
-
-
+/*
 static
 void
 fprintPoly_small_gp(char * s, uint32_t * a, int n, uint64_t mod)
@@ -128,10 +128,12 @@ fprintPoly_small_gp(char * s, uint32_t * a, int n, uint64_t mod)
 	
 	//("Mod(%ld,%ld)*x^%d + ",a[i],mod,i)
 	for (i = 0; i < n; ++i) {
-		printf("Mod(%ld,%ld)*x^%d + ",a[i],mod,i);
+		printf("Mod(%u,%ld)*x^%d + ",a[i],mod,i);
 	}
 	
 	printf("}");
 	
 	printf("\n");
 }
+*/
+
