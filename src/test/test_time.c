@@ -5,11 +5,10 @@
 #include <string.h>
 #include <gmp.h>
 
-//#include "../rng.h"
 #include "../sample.h"
 #include "../rlwe_mife.h"
 
-#define N_TESTS 5
+#define N_TESTS 3
 
 long long cpucycles(void)
 {
@@ -348,7 +347,7 @@ int test_rlwe_mife_mat_vec()			/*Only matrix-vector multiplication*/
 		
 		//gmp_printf("dy: %Zd\n", dy[0]);
 		//gmp_printf("Noise is : %Zd\n",noise_gmp);
-		
+
 		for(k=0;k<MIFE_N;k++){
 			if(mpz_cmp_ui(dy[k], res_vec[k])!=0){
 				printf("--ERROR---\n");

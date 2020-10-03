@@ -1,11 +1,9 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "modred.h"
-#include "sample.h"
 #include <stdlib.h>
 #include "sample.h"
-#include"aes256ctr.h"
+#include "aes256ctr.h"
 
 //#define UINT64_RAND_MAX ((RAND_MAX << 32)|RAND_MAX)
 
@@ -113,25 +111,6 @@ void sample_polya(unsigned char *seed, uint32_t poly_a[MIFE_NMODULI][MIFE_N]){
 
 }
 
-/*
-void
-sample_uniform
-(uint64_t a[MIFE_N])
-{
-	int i;
-	uint64_t num;
-	for (i = 0; i < MIFE_N; ++i) {
-		do {
-			num = rand();
-			num = (num << 32) | (rand());
-		//} while (num >= (UINT64_RAND_MAX - (UINT64_RAND_MAX % MIFE_Q)));
-		//a[i] = num % MIFE_Q;
-		} while (num >= MIFE_Q);
-		a[i] = num;
-	}
-}
-*/
-
 void sample_uniform(mpz_t a[MIFE_N])
 {
 	int i;
@@ -212,19 +191,6 @@ sample_sigma3
 		a[i] = num;
 	}
 }
-/*
-void sample_message(uint64_t a[MIFE_L])
-{
-	int i;
-	uint64_t num;
-	for (i = 0; i < MIFE_L; ++i) {
-		do {
-			num = rand() & (MIFE_B-1);
-		} while (num >= MIFE_B);
-		a[i] = num;
-	}
-}
-*/
 
 void sample_x(uint32_t a[MIFE_L])
 {
@@ -238,7 +204,6 @@ void sample_x(uint32_t a[MIFE_L])
 	}
 }
 
-
 void sample_y(uint32_t a[MIFE_L])
 {
 	int i;
@@ -250,6 +215,3 @@ void sample_y(uint32_t a[MIFE_L])
 		a[i] = num;
 	}
 }
-
-
-

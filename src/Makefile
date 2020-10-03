@@ -4,12 +4,12 @@ RM 		  = /bin/rm
 
 all: test/test_time
 
-SOURCES = crt.c randombytes.c modred.c gauss.c poly_mul.c mod_red.c ntt.c rlwe_mife.c sample.c aes256ctr.c
-HEADERS = crt.h randombytes.h modred.h gauss.h consts.h mod_red.h ntt.h params.h poly_mul.h rlwe_mife.h sample.h aes256ctr.h
+SOURCES = arith_rns.c crt.c randombytes.c gauss.c ntt.c rlwe_mife.c sample.c aes256ctr.c
+HEADERS = arith_rns.h crt.h randombytes.h gauss.h ntt.h rlwe_mife.h sample.h aes256ctr.h consts.h params.h
 
 
-test/test_time: $(SOURCES) $(HEADERS) test/test_time.c
-	$(CC) $(CFLAGS) -o $@ $(SOURCES) test/test_time.c -lgmp
+test/%: test/%.c $(SOURCES) $(HEADERS)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES) $< -lgmp
 
 .PHONY: clean test
 
@@ -17,4 +17,4 @@ test:
 	./test/test_time
 
 clean:
-	-$(RM) -r test/test_time
+	-$(RM) -rf test/test_time

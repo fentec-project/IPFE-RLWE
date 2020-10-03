@@ -1,8 +1,8 @@
-#include<stdio.h>
-#include<stdint.h>
+#include <stdio.h>
+#include <stdint.h>
 #include "params.h"
 #include "ntt.h"
-#include "mod_red.h"
+#include "arith_rns.h"
 #include "consts.h"
 
 static const uint32_t MIFE_NTT_NINV[MIFE_NMODULI]={16756741, 67026961, 2130186241};

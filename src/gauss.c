@@ -1,9 +1,10 @@
-#include<stdio.h>
-#include "aes256ctr.h"
+#include <stdint.h>
+#include <stdio.h>
 #include <x86intrin.h>
-#include "mod_red.h"
+#include "params.h"
+#include "arith_rns.h"
 #include "randombytes.h"
-#include"aes256ctr.h"
+#include "aes256ctr.h"
 #include "gauss.h"
 
 
