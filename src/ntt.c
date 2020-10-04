@@ -23,12 +23,6 @@ void poly_mul_ntt(uint32_t a[MIFE_N], uint32_t b[MIFE_N],uint32_t c[MIFE_N], uin
 	point_mul(a_t, b_t, c, sel);
 	GS_reverse(c, sel);
 
-	/*
-	CT_forward(a, sel);
-	CT_forward(b, sel);
-	point_mul(a, b, c, sel);
-	GS_reverse(c, sel);
-	*/
 }
 
 void point_mul(uint32_t a[MIFE_N], uint32_t b[MIFE_N], uint32_t c[MIFE_N], uint32_t sel){

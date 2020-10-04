@@ -14,14 +14,15 @@
 
 /*--------------------------TODO--------------------------
 1. Change the modular reductions : DONE
-2. Update the NTT multiplications
+2. Update the NTT multiplications : DONE
 3. Vector encryption and decryption : DONE
 4. Redeclare all MIFE to SIFE or FE
 ----------------------------TODO END----------------------*/
 void rlwe_mife_setup(uint32_t mpk[MIFE_L+1][MIFE_NMODULI][MIFE_N], uint32_t msk[MIFE_L][MIFE_NMODULI][MIFE_N]) 
 {
-	int i, j;
+	int i, j, k;
 	uint32_t e_crt[MIFE_NMODULI][MIFE_N];
+	uint32_t msk_ntt[MIFE_N];
 
 	aes256ctr_ctx state_secret, state_error;
 
@@ -36,19 +37,25 @@ void rlwe_mife_setup(uint32_t mpk[MIFE_L+1][MIFE_NMODULI][MIFE_N], uint32_t msk[
 	randombytes(seed, 32);
 	aes256ctr_init(&state_error, seed, 0);
 
+	// Store a in NTT domain
+	for (i = 0; i < MIFE_NMODULI; ++i) {
+		CT_forward(mpk[MIFE_L][i], i);
+	}
+
 	// Sample s_i and e_i with i = 1...l from D_sigma1
 	// pk_i = a * s_i + e_i
 	for (i = 0; i < MIFE_L; ++i) {
-		/*sample_sigma1(s);
-		sample_sigma1(e);
-		crt_convert(s, msk[i]);
-		crt_convert(e, e_crt);*/
 		gaussian_sampler_S1(&state_secret, msk[i], MIFE_N);
 		gaussian_sampler_S1(&state_error, e_crt, MIFE_N);
 		for (j = 0; j < MIFE_NMODULI; ++j) {
-			//printf("Multiplying %dth polynomial for %dth modulus\n",i, j);
-			poly_mul_ntt(mpk[MIFE_L][j], msk[i][j], mpk[i][j], j);
-			//add_mod(mpk[i][j], e_crt[j], mpk[i][j], MIFE_MOD_Q_I[j]);
+			// Store pk_i in NTT domain but not s_i
+			for (k = 0; k < MIFE_N; ++k) {
+				msk_ntt[k] = msk[i][j][k];
+			}
+			CT_forward(msk_ntt, j);
+			CT_forward(e_crt[j], j);
+			point_mul(mpk[MIFE_L][j], msk_ntt, mpk[i][j], j);
+			//poly_mul_ntt(mpk[MIFE_L][j], msk[i][j], mpk[i][j], j);
 			poly_add_mod(mpk[i][j], e_crt[j], mpk[i][j], j);
 		}
 	}
@@ -82,39 +89,33 @@ void rlwe_mife_encrypt(uint32_t m[MIFE_L], uint32_t mpk[MIFE_L+1][MIFE_NMODULI][
 	randombytes(seed, 32);
 	aes256ctr_init(&state_s3, seed, 0);
 
-	/*
 	// Sample r, f_0 from D_sigma2
-	sample_sigma2(r);
-	sample_sigma2(f);
-	//sample_zeros(f);
-	// c_0 = a * r + f_0
-	crt_convert(r, r_crt);
-	crt_convert(f, f_crt);*/
 
 	gaussian_sampler_S2(&state_s2, r_crt, MIFE_N);
 	gaussian_sampler_S2(&state_s2, f_crt, MIFE_N);
 
+	// r in NTT domain
 	for (i = 0; i < MIFE_NMODULI; ++i) {
-		//poly_mul_mod(mpk[MIFE_L][i], r_crt[i], c[MIFE_L][i], MIFE_MOD_Q_I[i]);
-		poly_mul_ntt(mpk[MIFE_L][i], r_crt[i], c[MIFE_L][i], i);
-		//add_mod(c[MIFE_L][i], f_crt[i], c[MIFE_L][i], MIFE_MOD_Q_I[i]);
+		CT_forward(r_crt[i], i);
+	}
+
+	for (i = 0; i < MIFE_NMODULI; ++i) {
+		//poly_mul_ntt(mpk[MIFE_L][i], r_crt[i], c[MIFE_L][i], i);
+		point_mul(mpk[MIFE_L][i], r_crt[i], c[MIFE_L][i], i);
+		GS_reverse(c[MIFE_L][i], i);
 		poly_add_mod(c[MIFE_L][i], f_crt[i], c[MIFE_L][i], i);
 	}
 
 	// Sample f_i with i = 1...l from D_sigma3
 	// c_i = pk_i * r + f_i + (floor(q/p)m_i)1_R
 	for (i = 0; i < MIFE_L; ++i) {
-		/*sample_sigma3(f);
-		//sample_zeros(f);
-		crt_convert(f, f_crt);*/
 		gaussian_sampler_S3(&state_s3, f_crt, MIFE_N);
 		
 		for (j = 0; j < MIFE_NMODULI; ++j) {
-			//poly_mul_mod(mpk[i][j], r_crt[j], c[i][j], MIFE_MOD_Q_I[j]);
-			poly_mul_ntt(mpk[i][j], r_crt[j], c[i][j], j);
-			//add_mod(c[i][j], f_crt[j], c[i][j], MIFE_MOD_Q_I[j]);
+			//poly_mul_ntt(mpk[i][j], r_crt[j], c[i][j], j);
+			point_mul(mpk[i][j], r_crt[j], c[i][j], j);
+			GS_reverse(c[i][j], j);
 			poly_add_mod(c[i][j], f_crt[j], c[i][j], j);
-			//add_mod(c[i][j], m[i][j], c[i][j], MIFE_MOD_Q_I[j]);
 			for (k = 0; k < MIFE_N; ++k) {
 				//c[i][j][k] = mod_red((c[i][j][k] + m_crt[j][i]), MIFE_MOD_Q_I[j]);
 				c[i][j][k] = mod_prime((c[i][j][k] + m_crt[j][i]), j);
@@ -228,29 +229,30 @@ void rlwe_mife_encrypt_vec(uint32_t m[MIFE_N][MIFE_L], uint32_t mpk[MIFE_L+1][MI
 	gaussian_sampler_S2(&state_s2, r_crt, MIFE_N);
 	gaussian_sampler_S2(&state_s2, f_crt, MIFE_N);
 
+	// r in NTT domain
 	for (i = 0; i < MIFE_NMODULI; ++i) {
-		//poly_mul_mod(mpk[MIFE_L][i], r_crt[i], c[MIFE_L][i], MIFE_MOD_Q_I[i]);
-		poly_mul_ntt(mpk[MIFE_L][i], r_crt[i], c[MIFE_L][i], i);
-		//add_mod(c[MIFE_L][i], f_crt[i], c[MIFE_L][i], MIFE_MOD_Q_I[i]);
+		CT_forward(r_crt[i], i);
+	}
+
+	for (i = 0; i < MIFE_NMODULI; ++i) {
+		//poly_mul_ntt(mpk[MIFE_L][i], r_crt[i], c[MIFE_L][i], i);
+		point_mul(mpk[MIFE_L][i], r_crt[i], c[MIFE_L][i], i);
+		GS_reverse(c[MIFE_L][i], i);
 		poly_add_mod(c[MIFE_L][i], f_crt[i], c[MIFE_L][i], i);
 	}
 
 	// Sample f_i with i = 1...l from D_sigma3
 	// c_i = pk_i * r + f_i + (floor(q/p)m_i)1_R
 	for (i = 0; i < MIFE_L; ++i) {
-		/*sample_sigma3(f);
-		//sample_zeros(f);
-		crt_convert(f, f_crt);*/
 		gaussian_sampler_S3(&state_s3, f_crt, MIFE_N);
 		
 		for (j = 0; j < MIFE_NMODULI; ++j) {
-			//poly_mul_mod(mpk[i][j], r_crt[j], c[i][j], MIFE_MOD_Q_I[j]);
-			poly_mul_ntt(mpk[i][j], r_crt[j], c[i][j], j);
-			//add_mod(c[i][j], f_crt[j], c[i][j], MIFE_MOD_Q_I[j]);
+			//poly_mul_ntt(mpk[i][j], r_crt[j], c[i][j], j);
+			point_mul(mpk[i][j], r_crt[j], c[i][j], j);
+			GS_reverse(c[i][j], j);
 			poly_add_mod(c[i][j], f_crt[j], c[i][j], j);
 			//add_mod(c[i][j], m[i][j], c[i][j], MIFE_MOD_Q_I[j]);
 			for (k = 0; k < MIFE_N; ++k) {
-				//c[i][j][k] = mod_red((c[i][j][k] + m_crt[k][j][i]), MIFE_MOD_Q_I[j]);
 				c[i][j][k] = mod_prime((c[i][j][k] + m_crt[k][j][i]), j);
 			}
 		}
