@@ -12,27 +12,27 @@
 
 void
 sample_zeros
-(uint64_t a[MIFE_N])
+(uint64_t a[SIFE_N])
 {
 	int i;
-	for (i = 0; i < MIFE_N; ++i) {
+	for (i = 0; i < SIFE_N; ++i) {
 		a[i] = 0;
 	}
 }
 
 void
 sample_ones
-(uint64_t a[MIFE_N])
+(uint64_t a[SIFE_N])
 {
 	int i;
-	for (i = 0; i < MIFE_N; ++i) {
+	for (i = 0; i < SIFE_N; ++i) {
 		a[i] = 1;
 	}
 }
 
 void
 sample_polya
-(unsigned char *seed, uint32_t poly_a[MIFE_NMODULI][MIFE_N])
+(unsigned char *seed, uint32_t poly_a[SIFE_NMODULI][SIFE_N])
 {
 	uint64_t i, counter=0, coeff_t[2],j;
 
@@ -48,14 +48,14 @@ sample_polya
 	mpz_init(coeff_gmp);
 	mpz_init(r_gmp);
 
-	if(mpz_set_str(Q_gmp, MIFE_Q_str,10)!=0){
+	if(mpz_set_str(Q_gmp, SIFE_Q_str,10)!=0){
 		printf("--ERROR unable to set Q to gmp--\n");
 		return;
 	}
 
 	aes256ctr_squeezeblocks(buf, AES_ROUNDS, &state); //as AES generates 128 bytes at a time
 
-	for(i=0;i<MIFE_N;i++){
+	for(i=0;i<SIFE_N;i++){
 
 		coeff_t[0]=0;
 		for(j=0;j<8;j++){
@@ -69,16 +69,16 @@ sample_polya
 
 		if(mpz_cmp(coeff_gmp, Q_gmp)<=0){
 			
-			poly_a[0][counter]=mpz_mod_ui(r_gmp, coeff_gmp, MIFE_MOD_Q_I[0]);	//set the reduced values mod q1, q2, q3
-			poly_a[1][counter]=mpz_mod_ui(r_gmp, coeff_gmp, MIFE_MOD_Q_I[1]);
-			poly_a[2][counter]=mpz_mod_ui(r_gmp, coeff_gmp, MIFE_MOD_Q_I[2]);
+			poly_a[0][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[0]);	//set the reduced values mod q1, q2, q3
+			poly_a[1][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[1]);
+			poly_a[2][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[2]);
 
 			counter++;	//increase the counter
 
 		}
 	}
 
-	while(counter<MIFE_N){
+	while(counter<SIFE_N){
 		aes256ctr_squeezeblocks(small_buf, 1, &state); 
 
 		for(i=0;i<11;i++){
@@ -94,12 +94,12 @@ sample_polya
 
 			if(mpz_cmp(coeff_gmp, Q_gmp)<=0){
 
-				poly_a[0][counter]=mpz_mod_ui(r_gmp, coeff_gmp, MIFE_MOD_Q_I[0]);	//set the reduced values mod q1, q2, q3
-				poly_a[1][counter]=mpz_mod_ui(r_gmp, coeff_gmp, MIFE_MOD_Q_I[1]);
-				poly_a[2][counter]=mpz_mod_ui(r_gmp, coeff_gmp, MIFE_MOD_Q_I[2]);
+				poly_a[0][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[0]);	//set the reduced values mod q1, q2, q3
+				poly_a[1][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[1]);
+				poly_a[2][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[2]);
 
 				counter++;	//increase the counter
-				if(counter==MIFE_N)
+				if(counter==SIFE_N)
 					break;
 			}
 		}
@@ -112,7 +112,7 @@ sample_polya
 
 void
 sample_uniform
-(mpz_t a[MIFE_N])
+(mpz_t a[SIFE_N])
 {
 	int i;
 	uint64_t num;
@@ -123,13 +123,13 @@ sample_uniform
 	mpz_init(num_gmp);
 
 	//mpz_set_str(Q_gmp, Q_string, 10);
-	if(mpz_set_str(Q_gmp, MIFE_Q_str, 10)!=0){
+	if(mpz_set_str(Q_gmp, SIFE_Q_str, 10)!=0){
 
 		printf("--ERROR unable to set Q to gmp--\n");
 		return;
 	}
 
-	for (i = 0; i < MIFE_N; ++i) {
+	for (i = 0; i < SIFE_N; ++i) {
 		
 		num = rand();
 		mpz_set_ui(num_gmp, num);
@@ -152,42 +152,42 @@ sample_uniform
 
 void
 sample_m
-(uint32_t a[MIFE_N])
+(uint32_t a[SIFE_N])
 {
 	int i;
 	uint64_t num;
-	for (i = 0; i < MIFE_N; ++i) {
+	for (i = 0; i < SIFE_N; ++i) {
 		do {
-			num = rand() & (MIFE_B_x-1);	//only works for power-of-two numbers to be changed
-		} while (num >= MIFE_B_x);
+			num = rand() & (SIFE_B_x-1);	//only works for power-of-two numbers to be changed
+		} while (num >= SIFE_B_x);
 		a[i] = num;
 	}
 }
 
 void
 sample_x
-(uint32_t a[MIFE_L])
+(uint32_t a[SIFE_L])
 {
 	int i;
 	uint64_t num;
-	for (i = 0; i < MIFE_L; ++i) {
+	for (i = 0; i < SIFE_L; ++i) {
 		do {
-			num = rand() & (MIFE_B_x-1);	//only works for power-of-two numbers to be changed
-		} while (num >= MIFE_B_x);
+			num = rand() & (SIFE_B_x-1);	//only works for power-of-two numbers to be changed
+		} while (num >= SIFE_B_x);
 		a[i] = num;
 	}
 }
 
 void
 sample_y
-(uint32_t a[MIFE_L])
+(uint32_t a[SIFE_L])
 {
 	int i;
 	uint64_t num;
-	for (i = 0; i < MIFE_L; ++i) {
+	for (i = 0; i < SIFE_L; ++i) {
 		do {
-			num = rand() & (MIFE_B_y-1);
-		} while (num >= MIFE_B_y);
+			num = rand() & (SIFE_B_y-1);
+		} while (num >= SIFE_B_y);
 		a[i] = num;
 	}
 }

@@ -27,8 +27,8 @@ add_mod_ntt
 
 	c = (uint64_t)a + (uint64_t)b;
 
-	if (c >= MIFE_MOD_Q_I[sel]) {
-		c -= MIFE_MOD_Q_I[sel];
+	if (c >= SIFE_MOD_Q_I[sel]) {
+		c -= SIFE_MOD_Q_I[sel];
 	}
 	return (uint32_t)c;
 }
@@ -39,10 +39,10 @@ sub_mod_ntt
 {
 	uint64_t c;
 
-	c = (uint64_t)a + (uint64_t)MIFE_MOD_Q_I[sel] - (uint64_t)b;
+	c = (uint64_t)a + (uint64_t)SIFE_MOD_Q_I[sel] - (uint64_t)b;
 
-	if (c >= MIFE_MOD_Q_I[sel]) {
-		c -= MIFE_MOD_Q_I[sel];
+	if (c >= SIFE_MOD_Q_I[sel]) {
+		c -= SIFE_MOD_Q_I[sel];
 	}
 	return (uint32_t)c;
 }
@@ -62,7 +62,7 @@ uint32_t
 mod_prime
 (uint64_t m, uint32_t sel)
 {
-	while ( m > (2*(uint64_t)MIFE_MOD_Q_I[sel]) ) {
+	while ( m > (2*(uint64_t)SIFE_MOD_Q_I[sel]) ) {
 		if (sel == 0) {
 			m = ( m& (k1_q1_minus_one) ) + ( ((m>>k1_q1)<<k2_q1) - (m>>k1_q1) );
 		}
@@ -73,28 +73,28 @@ mod_prime
 			m = ( m& (k1_q3_minus_one) ) + ( ((m>>k1_q3)<<k2_q3) - (m>>k1_q3) );
 		}
 	}
-	if (m >= MIFE_MOD_Q_I[sel]) {
-		m = m - MIFE_MOD_Q_I[sel];
+	if (m >= SIFE_MOD_Q_I[sel]) {
+		m = m - SIFE_MOD_Q_I[sel];
 	}
 	return (uint32_t)m;
 }
 
 void
 poly_add_mod
-(const uint32_t a[MIFE_N], const uint32_t b[MIFE_N], uint32_t c[MIFE_N], const uint32_t sel)
+(const uint32_t a[SIFE_N], const uint32_t b[SIFE_N], uint32_t c[SIFE_N], const uint32_t sel)
 {
 	int i;
-	for (i = 0; i < MIFE_N; ++i) {
+	for (i = 0; i < SIFE_N; ++i) {
 		c[i] = add_mod_ntt(a[i], b[i], sel);
 	}
 }
 
 void
 poly_sub_mod
-(const uint32_t a[MIFE_N], const uint32_t b[MIFE_N], uint32_t c[MIFE_N], const uint32_t sel)
+(const uint32_t a[SIFE_N], const uint32_t b[SIFE_N], uint32_t c[SIFE_N], const uint32_t sel)
 {
 	int i;
-	for (i = 0; i < MIFE_N; ++i) {
+	for (i = 0; i < SIFE_N; ++i) {
 		c[i] = sub_mod_ntt(a[i], b[i], sel);
 	}
 }

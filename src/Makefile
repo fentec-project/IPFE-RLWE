@@ -4,8 +4,8 @@ RM 		  = /bin/rm
 
 all: test/test_time
 
-SOURCES = arith_rns.c crt.c randombytes.c gauss.c ntt.c rlwe_mife.c sample.c aes256ctr.c
-HEADERS = arith_rns.h crt.h randombytes.h gauss.h ntt.h rlwe_mife.h sample.h aes256ctr.h consts.h params.h
+SOURCES = arith_rns.c crt.c randombytes.c gauss.c ntt.c rlwe_sife.c sample.c aes256ctr.c
+HEADERS = arith_rns.h crt.h randombytes.h gauss.h ntt.h rlwe_sife.h sample.h aes256ctr.h consts.h params.h
 
 
 test/%: test/%.c $(SOURCES) $(HEADERS)

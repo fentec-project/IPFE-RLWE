@@ -379,8 +379,8 @@ static inline void uniform_sampler_S3(unsigned char *r, __m256i *y1, __m256i *y2
 }
 
 
-//void gaussian_sampler_S1(unsigned char *seed, int64_t sample[MIFE_NMODULI][MIFE_N], uint32_t slen)
-void gaussian_sampler_S1(aes256ctr_ctx *state, uint32_t sample[MIFE_NMODULI][MIFE_N], uint32_t slen)
+//void gaussian_sampler_S1(unsigned char *seed, int64_t sample[SIFE_NMODULI][SIFE_N], uint32_t slen)
+void gaussian_sampler_S1(aes256ctr_ctx *state, uint32_t sample[SIFE_NMODULI][SIFE_N], uint32_t slen)
 {
 	__m256i v_x, v_y1, v_y2, v_z, v_b_in;
 	uint64_t z[8] __attribute__ ((aligned (32)));
@@ -452,17 +452,17 @@ void gaussian_sampler_S1(aes256ctr_ctx *state, uint32_t sample[MIFE_NMODULI][MIF
 		mod2=mod_prime(mod, 1);
 		mod3=mod_prime(mod, 2);		
 		
-		sample[0][j]=(1-k)*mod1+k*mod_prime(MIFE_MOD_Q_I[0]-mod1, 0);
-		sample[1][j]=(1-k)*mod2+k*mod_prime(MIFE_MOD_Q_I[1]-mod2, 1);
-		sample[2][j]=(1-k)*mod3+k*mod_prime(MIFE_MOD_Q_I[2]-mod3, 2);
+		sample[0][j]=(1-k)*mod1+k*mod_prime(SIFE_MOD_Q_I[0]-mod1, 0);
+		sample[1][j]=(1-k)*mod2+k*mod_prime(SIFE_MOD_Q_I[1]-mod2, 1);
+		sample[2][j]=(1-k)*mod3+k*mod_prime(SIFE_MOD_Q_I[2]-mod3, 2);
 		j++;
 
 	}
 
 }
 
-//void gaussian_sampler_S2(unsigned char *seed, uint32_t sample[MIFE_NMODULI][MIFE_N], uint32_t slen)
-void gaussian_sampler_S2(aes256ctr_ctx *state, uint32_t sample[MIFE_NMODULI][MIFE_N], uint32_t slen)
+//void gaussian_sampler_S2(unsigned char *seed, uint32_t sample[SIFE_NMODULI][SIFE_N], uint32_t slen)
+void gaussian_sampler_S2(aes256ctr_ctx *state, uint32_t sample[SIFE_NMODULI][SIFE_N], uint32_t slen)
 {
 	__m256i v_x, v_y1, v_y2, v_z, v_b_in;
 	uint64_t z[8] __attribute__ ((aligned (32)));
@@ -533,16 +533,16 @@ void gaussian_sampler_S2(aes256ctr_ctx *state, uint32_t sample[MIFE_NMODULI][MIF
 		mod2=mod_prime(mod, 1);
 		mod3=mod_prime(mod, 2);		
 
-		sample[0][j]=(1-k)*mod1+k*mod_prime(MIFE_MOD_Q_I[0]-mod1, 0);
-		sample[1][j]=(1-k)*mod2+k*mod_prime(MIFE_MOD_Q_I[1]-mod2, 1);
-		sample[2][j]=(1-k)*mod3+k*mod_prime(MIFE_MOD_Q_I[2]-mod3, 2);
+		sample[0][j]=(1-k)*mod1+k*mod_prime(SIFE_MOD_Q_I[0]-mod1, 0);
+		sample[1][j]=(1-k)*mod2+k*mod_prime(SIFE_MOD_Q_I[1]-mod2, 1);
+		sample[2][j]=(1-k)*mod3+k*mod_prime(SIFE_MOD_Q_I[2]-mod3, 2);
 		j++;
 
 	}
 }
 
-//void gaussian_sampler_S3(unsigned char *seed, uint32_t sample[MIFE_NMODULI][MIFE_N], uint32_t slen)
-void gaussian_sampler_S3(aes256ctr_ctx *state, uint32_t sample[MIFE_NMODULI][MIFE_N], uint32_t slen)
+//void gaussian_sampler_S3(unsigned char *seed, uint32_t sample[SIFE_NMODULI][SIFE_N], uint32_t slen)
+void gaussian_sampler_S3(aes256ctr_ctx *state, uint32_t sample[SIFE_NMODULI][SIFE_N], uint32_t slen)
 {
 	__m256i v_x, v_y1, v_y2, v_z, v_b_in;
 	uint64_t z[8] __attribute__ ((aligned (32)));
@@ -613,9 +613,9 @@ void gaussian_sampler_S3(aes256ctr_ctx *state, uint32_t sample[MIFE_NMODULI][MIF
 		mod2=mod_prime(mod, 1);
 		mod3=mod_prime(mod, 2);		
 
-		sample[0][j]=(1-k)*mod1+k*mod_prime(MIFE_MOD_Q_I[0]-mod1, 0);
-		sample[1][j]=(1-k)*mod2+k*mod_prime(MIFE_MOD_Q_I[1]-mod2, 1);
-		sample[2][j]=(1-k)*mod3+k*mod_prime(MIFE_MOD_Q_I[2]-mod3, 2);
+		sample[0][j]=(1-k)*mod1+k*mod_prime(SIFE_MOD_Q_I[0]-mod1, 0);
+		sample[1][j]=(1-k)*mod2+k*mod_prime(SIFE_MOD_Q_I[1]-mod2, 1);
+		sample[2][j]=(1-k)*mod3+k*mod_prime(SIFE_MOD_Q_I[2]-mod3, 2);
 		j++;
 	}
 }
