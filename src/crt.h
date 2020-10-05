@@ -3,7 +3,7 @@
 
 #include <gmp.h>
 
-void crt_convert (const uint64_t a[MIFE_N], uint32_t a_crt[MIFE_NMODULI][MIFE_N]);
+void crt_convert (const uint32_t a[MIFE_N], uint32_t a_crt[MIFE_NMODULI][MIFE_N]);
 
 void crt_convert_gmp (const mpz_t a[MIFE_N], uint32_t a_crt[MIFE_NMODULI][MIFE_N]);
 

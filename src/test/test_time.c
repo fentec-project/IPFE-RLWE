@@ -124,8 +124,6 @@ int test_rlwe_mife_vec_vec()			/*Only vector-vector multiplication*/
 		printf("i : %lu\n",i);
 
 		// Sample message and y
-		//sample_message(m);
-		//sample_message(y);
 		sample_x(m);
 		sample_y(y);
 
@@ -217,7 +215,7 @@ int test_rlwe_mife_mat_vec()			/*Only matrix-vector multiplication*/
 	uint32_t sk_y[MIFE_NMODULI][MIFE_N];
 	//uint32_t d_y[MIFE_NMODULI][MIFE_N];
 
-	uint32_t m[MIFE_N][MIFE_L];
+	uint32_t m[MIFE_L][MIFE_N];
 	uint32_t y[MIFE_L];
 	uint32_t res_vec[MIFE_N];
 
@@ -282,12 +280,9 @@ int test_rlwe_mife_mat_vec()			/*Only matrix-vector multiplication*/
 		printf("i : %lu\n",i);
 
 		// Sample message and y
-		//sample_message(m);
-		//sample_message(y);
-		//sample_x(m);
 		sample_y(y);
-		for(k=0;k<MIFE_N;k++){
-			sample_x(m[k]);
+		for(k=0;k<MIFE_L;k++){
+			sample_m(m[k]);
 		}
 
 		//Generation of master secret key sk and master public key pk pair
@@ -322,7 +317,7 @@ int test_rlwe_mife_mat_vec()			/*Only matrix-vector multiplication*/
 		for(k=0;k<MIFE_N;k++){
 			res_vec[k]=0;	
 			for (j = 0; j < MIFE_L; ++j) {
-				res_vec[k]= res_vec[k]+m[k][j]*y[j];
+				res_vec[k]= res_vec[k]+m[j][k]*y[j];
 			}
 		}
 

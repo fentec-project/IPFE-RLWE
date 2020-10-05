@@ -6,7 +6,7 @@
 
 void
 crt_convert
-(const uint64_t a[MIFE_N], uint32_t a_crt[MIFE_NMODULI][MIFE_N])
+(const uint32_t a[MIFE_N], uint32_t a_crt[MIFE_NMODULI][MIFE_N])
 {
 	int i, j;
 	for (i = 0; i < MIFE_N; ++i) {

@@ -12,12 +12,7 @@
 #include "gauss.h"
 #include "aes256ctr.h"
 
-/*--------------------------TODO--------------------------
-1. Change the modular reductions : DONE
-2. Update the NTT multiplications : DONE
-3. Vector encryption and decryption : DONE
-4. Redeclare all MIFE to SIFE or FE
-----------------------------TODO END----------------------*/
+
 void rlwe_mife_setup(uint32_t mpk[MIFE_L+1][MIFE_NMODULI][MIFE_N], uint32_t msk[MIFE_L][MIFE_NMODULI][MIFE_N]) 
 {
 	int i, j, k;
@@ -32,8 +27,6 @@ void rlwe_mife_setup(uint32_t mpk[MIFE_L+1][MIFE_NMODULI][MIFE_N], uint32_t msk[
 
 	sample_polya(seed, mpk[MIFE_L]);
 
-	randombytes(seed, 32);
-	aes256ctr_init(&state_secret, seed, 0); /*Both are being sampled from sigma_1 no need to initialize twice*/
 	randombytes(seed, 32);
 	aes256ctr_init(&state_error, seed, 0);
 
@@ -85,8 +78,6 @@ void rlwe_mife_encrypt(uint32_t m[MIFE_L], uint32_t mpk[MIFE_L+1][MIFE_NMODULI][
 
 	randombytes(seed, 32);
 	aes256ctr_init(&state_s2, seed, 0);
-	randombytes(seed, 32);
-	aes256ctr_init(&state_s3, seed, 0);
 
 	// Sample r, f_0 from D_sigma2
 
@@ -186,36 +177,30 @@ void rlwe_mife_decrypt_gmp(uint32_t c[MIFE_L+1][MIFE_NMODULI][MIFE_N], const uin
 	crt_reverse_gmp(dy, d_y);
 }
 
-void rlwe_mife_encrypt_vec(uint32_t m[MIFE_N][MIFE_L], uint32_t mpk[MIFE_L+1][MIFE_NMODULI][MIFE_N], uint32_t c[MIFE_L+1][MIFE_NMODULI][MIFE_N]) //add const keywords
+void rlwe_mife_encrypt_vec(uint32_t m[MIFE_L][MIFE_N], uint32_t mpk[MIFE_L+1][MIFE_NMODULI][MIFE_N], uint32_t c[MIFE_L+1][MIFE_NMODULI][MIFE_N]) //add const keywords
 {
 	int i, j, k;
 	uint32_t r_crt[MIFE_NMODULI][MIFE_N], f_crt[MIFE_NMODULI][MIFE_N];
 
-	uint32_t m_crt[MIFE_N][MIFE_NMODULI][MIFE_L];
+	uint32_t m_crt[MIFE_L][MIFE_NMODULI][MIFE_N];
 
 	aes256ctr_ctx state_s2, state_s3;
 	unsigned char seed[32];
 
 	// CRT and scaled message
-
-	for(i=0;i<MIFE_N;i++){
-		crt_convert_generic(m[i], m_crt[i], MIFE_L); // needs to be changed. messagges are small no need for reduction
-	}
-
 	uint64_t mxm;
-	for(k=0;k<MIFE_N;k++){	
-		for (i = 0; i < MIFE_L; ++i) {
-			for (j = 0; j < MIFE_NMODULI; ++j) {
-				mxm = (uint64_t)m_crt[k][j][i] * MIFE_SCALE_M_MOD_Q_I[j];
-				m_crt[k][j][i] = mod_prime(mxm, j);
+	for (i = 0; i < MIFE_L; ++i) {
+		crt_convert(m[i], m_crt[i]);
+		for (j = 0; j < MIFE_NMODULI; ++j) {
+			for (k = 0; k < MIFE_N; ++k) {
+				mxm = (uint64_t)m_crt[i][j][k] * MIFE_SCALE_M_MOD_Q_I[j];
+				m_crt[i][j][k] = mod_prime(mxm, j);
 			}
 		}
 	}
 
 	randombytes(seed, 32);
 	aes256ctr_init(&state_s2, seed, 0);
-	randombytes(seed, 32);
-	aes256ctr_init(&state_s3, seed, 0);
 
 	gaussian_sampler_S2(&state_s2, r_crt, MIFE_N);
 	gaussian_sampler_S2(&state_s2, f_crt, MIFE_N);
@@ -242,10 +227,7 @@ void rlwe_mife_encrypt_vec(uint32_t m[MIFE_N][MIFE_L], uint32_t mpk[MIFE_L+1][MI
 			point_mul(mpk[i][j], r_crt[j], c[i][j], j);
 			GS_reverse(c[i][j], j);
 			poly_add_mod(c[i][j], f_crt[j], c[i][j], j);
-			//add_mod(c[i][j], m[i][j], c[i][j], MIFE_MOD_Q_I[j]);
-			for (k = 0; k < MIFE_N; ++k) {
-				c[i][j][k] = mod_prime((c[i][j][k] + m_crt[k][j][i]), j);
-			}
+			poly_add_mod(c[i][j], m_crt[i][j], c[i][j], j);
 		}
 	}
 }

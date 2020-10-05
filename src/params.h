@@ -27,9 +27,4 @@ static const char MIFE_SCALE_M_str[]="47655882005084197345";
 
 static const uint64_t MIFE_SCALE_M_MOD_Q_I[MIFE_NMODULI]={11414086, 13786043, 483894834};	//*
 
-
-#define MIFE_SIGMA1 10
-#define MIFE_SIGMA2 10
-#define MIFE_SIGMA3 10
-
 #endif
