@@ -1,7 +1,7 @@
 #ifndef RLWE_MIFE_H
 #define RLWE_MIFE_H
 
-#include<gmp.h>
+#include <gmp.h>
 #include "params.h"
 
 void rlwe_mife_setup (uint32_t mpk[MIFE_L+1][MIFE_NMODULI][MIFE_N], uint32_t msk[MIFE_L][MIFE_NMODULI][MIFE_N]);

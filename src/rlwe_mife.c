@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <gmp.h>
 #include "params.h"
 #include "rlwe_mife.h"
 #include "crt.h"
@@ -10,7 +11,6 @@
 #include "arith_rns.h"
 #include "gauss.h"
 #include "aes256ctr.h"
-#include <gmp.h>
 
 /*--------------------------TODO--------------------------
 1. Change the modular reductions : DONE
@@ -79,7 +79,6 @@ void rlwe_mife_encrypt(uint32_t m[MIFE_L], uint32_t mpk[MIFE_L+1][MIFE_NMODULI][
 	for (i = 0; i < MIFE_L; ++i) {
 		for (j = 0; j < MIFE_NMODULI; ++j) {
 			mxm = (uint64_t)m_crt[j][i] * MIFE_SCALE_M_MOD_Q_I[j];
-			//m_crt[j][i] = mod_red(mxm, MIFE_MOD_Q_I[j]);
 			m_crt[j][i] = mod_prime(mxm, j);
 		}
 	}
@@ -117,7 +116,6 @@ void rlwe_mife_encrypt(uint32_t m[MIFE_L], uint32_t mpk[MIFE_L+1][MIFE_NMODULI][
 			GS_reverse(c[i][j], j);
 			poly_add_mod(c[i][j], f_crt[j], c[i][j], j);
 			for (k = 0; k < MIFE_N; ++k) {
-				//c[i][j][k] = mod_red((c[i][j][k] + m_crt[j][i]), MIFE_MOD_Q_I[j]);
 				c[i][j][k] = mod_prime((c[i][j][k] + m_crt[j][i]), j);
 			}
 		}
@@ -141,11 +139,9 @@ void rlwe_mife_keygen(const uint32_t y[MIFE_L], const uint32_t msk[MIFE_L][MIFE_
 
 	for (i = 0; i < MIFE_L; ++i) {
 		for (j = 0; j < MIFE_NMODULI; ++j) {
-			//poly_mul_mac_mod(y[i][j], msk[i][j], sk_y[j], MIFE_MOD_Q_I[j]);
 			for (k = 0; k < MIFE_N; ++k) {
 				mac = (uint64_t)y_crt[j][i]*msk[i][j][k];
 				mac = mac + sk_y[j][k];
-				//sk_y[j][k] = mod_red(mac, MIFE_MOD_Q_I[j]);
 				sk_y[j][k] = mod_prime(mac, j);
 			}
 		}
@@ -173,20 +169,16 @@ void rlwe_mife_decrypt_gmp(uint32_t c[MIFE_L+1][MIFE_NMODULI][MIFE_N], const uin
 
 	for (i = 0; i < MIFE_L; ++i) {
 		for (j = 0; j < MIFE_NMODULI; ++j) {
-			//poly_mul_mac_mod(y[i][j], c[i][j], d_y[j], MIFE_MOD_Q_I[j]);
 			for (k = 0; k < MIFE_N; ++k) {
 				mac = (uint64_t)y_crt[j][i]*c[i][j][k];
 				mac = mac + d_y[j][k];
-				//d_y[j][k] = mod_red(mac, MIFE_MOD_Q_I[j]);
 				d_y[j][k] = mod_prime(mac, j);
 			}
 		}
 	}
 
 	for (i = 0; i < MIFE_NMODULI; ++i) {
-		//poly_mul_mod(c[MIFE_L][i], sk_y[i], c0sy[i], MIFE_MOD_Q_I[i]);
 		poly_mul_ntt(c[MIFE_L][i], sk_y[i], c0sy[i], i);
-		//sub_mod(d_y[i], c0sy[i], d_y[i], MIFE_MOD_Q_I[i]);
 		poly_sub_mod(d_y[i], c0sy[i], d_y[i], i);
 	}
 
@@ -215,7 +207,6 @@ void rlwe_mife_encrypt_vec(uint32_t m[MIFE_N][MIFE_L], uint32_t mpk[MIFE_L+1][MI
 		for (i = 0; i < MIFE_L; ++i) {
 			for (j = 0; j < MIFE_NMODULI; ++j) {
 				mxm = (uint64_t)m_crt[k][j][i] * MIFE_SCALE_M_MOD_Q_I[j];
-				//m_crt[k][j][i] = mod_red(mxm, MIFE_MOD_Q_I[j]);
 				m_crt[k][j][i] = mod_prime(mxm, j);
 			}
 		}
@@ -280,20 +271,16 @@ void rlwe_mife_decrypt_gmp_vec(uint32_t c[MIFE_L+1][MIFE_NMODULI][MIFE_N], const
 
 	for (i = 0; i < MIFE_L; ++i) {
 		for (j = 0; j < MIFE_NMODULI; ++j) {
-			//poly_mul_mac_mod(y[i][j], c[i][j], d_y[j], MIFE_MOD_Q_I[j]);
 			for (k = 0; k < MIFE_N; ++k) {
 				mac = (uint64_t)y_crt[j][i]*c[i][j][k];
 				mac = mac + d_y[j][k];
-				//d_y[j][k] = mod_red(mac, MIFE_MOD_Q_I[j]);
 				d_y[j][k] = mod_prime(mac, j);
 			}
 		}
 	}
 
 	for (i = 0; i < MIFE_NMODULI; ++i) {
-		//poly_mul_mod(c[MIFE_L][i], sk_y[i], c0sy[i], MIFE_MOD_Q_I[i]);
 		poly_mul_ntt(c[MIFE_L][i], sk_y[i], c0sy[i], i);
-		//sub_mod(d_y[i], c0sy[i], d_y[i], MIFE_MOD_Q_I[i]);
 		poly_sub_mod(d_y[i], c0sy[i], d_y[i], i);
 	}
 
@@ -347,8 +334,4 @@ void round_extract_gmp(mpz_t a[MIFE_N])
 	mpz_clear(MIFE_Q_gmp);
 	mpz_clear(MIFE_P_gmp);
 	mpz_clear(MIFE_Q_gmp_by2);
-
-	//for (i = 0; i < MIFE_N; ++i) {
-	//	a[i] = (MIFE_P*a[i])/MIFE_Q;
-	//}
 }

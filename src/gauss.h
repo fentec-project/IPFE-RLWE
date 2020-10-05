@@ -1,5 +1,6 @@
 #ifndef GAUSS_H
 #define GAUSS_H
+
 #include"aes256ctr.h"
 #include "params.h"
 

@@ -2,8 +2,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "randombytes.h"
 #include <sys/syscall.h>
+#include "randombytes.h"
 
 #define _GNU_SOURCE
 

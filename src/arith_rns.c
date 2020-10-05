@@ -24,27 +24,26 @@ add_mod_ntt
 (uint32_t a, uint32_t b, uint32_t sel)
 {
 	uint64_t c;
-	c=a+b;
 
-	if(c>=MIFE_MOD_Q_I[sel]){
-			c=c-MIFE_MOD_Q_I[sel];
+	c = a + b;
+
+	if (c >= MIFE_MOD_Q_I[sel]) {
+		c -= MIFE_MOD_Q_I[sel];
 	}
-
 	return (uint32_t)c;
 }
 
 uint32_t
 sub_mod_ntt
-(uint32_t a, uint32_t b, uint32_t sel)
-{	//returns a-b Mod Q
-
+(uint32_t a, uint32_t b, uint32_t sel)//returns a-b Mod Q
+{
 	uint64_t c;
+
 	c=a+MIFE_MOD_Q_I[sel]-b;
 
-	if(c>=MIFE_MOD_Q_I[sel]){
-			c=c-MIFE_MOD_Q_I[sel];
+	if (c >= MIFE_MOD_Q_I[sel]) {
+		c -= MIFE_MOD_Q_I[sel];
 	}
-
 	return (uint32_t)c;
 }
 

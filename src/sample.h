@@ -1,5 +1,6 @@
 #ifndef SAMPLE_H
 #define SAMPLE_H
+
 #include "params.h"
 #include <gmp.h>
 
@@ -13,9 +14,7 @@ void sample_uniform(mpz_t a[MIFE_N]);
 void sample_polya(unsigned char *seed, uint32_t poly_a[MIFE_NMODULI][MIFE_N]);
 
 void sample_sigma1 (uint64_t a[MIFE_N]);
-
 void sample_sigma2 (uint64_t a[MIFE_N]);
-
 void sample_sigma3 (uint64_t a[MIFE_N]);
 
 void sample_message (uint64_t a[MIFE_L]);

@@ -30,8 +30,10 @@ sample_ones
 	}
 }
 
-void sample_polya(unsigned char *seed, uint32_t poly_a[MIFE_NMODULI][MIFE_N]){
-
+void
+sample_polya
+(unsigned char *seed, uint32_t poly_a[MIFE_NMODULI][MIFE_N])
+{
 	uint64_t i, counter=0, coeff_t[2],j;
 
 	aes256ctr_ctx state;
@@ -106,12 +108,11 @@ void sample_polya(unsigned char *seed, uint32_t poly_a[MIFE_NMODULI][MIFE_N]){
 	mpz_clear(Q_gmp);
 	mpz_clear(coeff_gmp);
 	mpz_clear(r_gmp);
-
-
-
 }
 
-void sample_uniform(mpz_t a[MIFE_N])
+void
+sample_uniform
+(mpz_t a[MIFE_N])
 {
 	int i;
 	uint64_t num;
@@ -127,7 +128,6 @@ void sample_uniform(mpz_t a[MIFE_N])
 		printf("--ERROR unable to set Q to gmp--\n");
 		return;
 	}
-
 
 	for (i = 0; i < MIFE_N; ++i) {
 		
@@ -192,7 +192,9 @@ sample_sigma3
 	}
 }
 
-void sample_x(uint32_t a[MIFE_L])
+void
+sample_x
+(uint32_t a[MIFE_L])
 {
 	int i;
 	uint64_t num;
@@ -204,7 +206,9 @@ void sample_x(uint32_t a[MIFE_L])
 	}
 }
 
-void sample_y(uint32_t a[MIFE_L])
+void
+sample_y
+(uint32_t a[MIFE_L])
 {
 	int i;
 	uint64_t num;

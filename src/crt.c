@@ -1,6 +1,4 @@
-#include <string.h>
 #include <stdint.h>
-#include <stdio.h>
 #include "params.h"
 #include "arith_rns.h"
 #include "crt.h"
@@ -13,7 +11,6 @@ crt_convert
 	int i, j;
 	for (i = 0; i < MIFE_N; ++i) {
 		for (j = 0; j < MIFE_NMODULI; ++j) {
-			//a_crt[j][i] = mod_red(a[i], MIFE_MOD_Q_I[j]);
 			a_crt[j][i] = mod_prime(a[i], j);
 		}
 	}
@@ -40,7 +37,6 @@ crt_convert_generic
 	int i, j;
 	for (i = 0; i < len; ++i) {
 		for (j = 0; j < MIFE_NMODULI; ++j) {
-			//a_crt[j][i] = mod_red(a[i], MIFE_MOD_Q_I[j]);
 			a_crt[j][i] = mod_prime(a[i], j);
 		}
 	}

@@ -8,7 +8,7 @@
 #include "../sample.h"
 #include "../rlwe_mife.h"
 
-#define N_TESTS 3
+#define N_TESTS 5
 
 long long cpucycles(void)
 {
