@@ -7,17 +7,33 @@
 #include "aes256ctr.h"
 #include "gauss.h"
 
+/*ceil(DESIRED_SIGMA/sigma_0) sigma_0=sqrt( 1/(2*log(2) ) )*/
+#if SEC_LEVEL==0
+
+//sigma_1 : 33 sigma_2 : 64880641 sigma_3 : 129761280
+#define BINARY_SAMPLER_K_S1 39		//sigma_1
+#define BINARY_SAMPLER_K_S2 76391117LL	//sigma_2
+#define BINARY_SAMPLER_K_S3 152782232LL	//sigma_3
+
+#elif SEC_LEVEL==1
+
+#define BINARY_SAMPLER_K_S1 266		//sigma_1
+#define BINARY_SAMPLER_K_S2 304214978LL	//sigma_2
+#define BINARY_SAMPLER_K_S3 608429953LL	//sigma_3
+
+#elif SEC_LEVEL==2
+
+#define BINARY_SAMPLER_K_S1 2413
+#define BINARY_SAMPLER_K_S2 2029291141LL
+#define BINARY_SAMPLER_K_S3 2232220255LL
+
+#endif
 
 #define CDT_ENTRY_SIZE 16
 #define CDT_LOW_MASK 0x7fffffffffffffff
 #define CDT_LENGTH 9 /* [0..tau*sigma]=[0..9] */
 
 #define BERNOULLI_ENTRY_SIZE 9 /* 72bit randomness */
-
-/*ceil(DESIRED_SIGMA/sigma_0) sigma_0=sqrt( 1/(2*log(2) ) )*/
-#define BINARY_SAMPLER_K_S1 266		//sigma_1
-#define BINARY_SAMPLER_K_S2 304214978LL	//sigma_2
-#define BINARY_SAMPLER_K_S3 608429953LL	//sigma_3
 
 /* -1/k^2 */
 #define BINARY_SAMPLER_K_2_INV_S1 (-1.0/(BINARY_SAMPLER_K_S1 * BINARY_SAMPLER_K_S1))

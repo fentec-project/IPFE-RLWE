@@ -4,6 +4,18 @@
 #include "params.h"
 #include "arith_rns.h"
 
+#if SEC_LEVEL==0
+
+#define k1_q1 16
+#define k2_q1 12
+
+#define k1_q2 17
+#define k2_q2 14
+
+#define k1_q3 31
+#define k2_q3 17
+
+#elif SEC_LEVEL==1
 
 #define k1_q1 24
 #define k2_q1 14
@@ -13,6 +25,21 @@
 
 #define k1_q3 31
 #define k2_q3 24
+
+
+#elif SEC_LEVEL==2
+
+#define k1_q1 31
+#define k2_q1 17
+
+#define k1_q2 31
+#define k2_q2 19
+
+#define k1_q3 32
+#define k2_q3 20
+
+#endif
+
 
 
 #define k1_q1_minus_one ( (1UL<<k1_q1)-1 )

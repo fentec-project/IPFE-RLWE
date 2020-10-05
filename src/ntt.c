@@ -5,7 +5,20 @@
 #include "arith_rns.h"
 #include "consts.h"
 
+
+#if SEC_LEVEL==0
+
+static const uint32_t SIFE_NTT_NINV[SIFE_NMODULI]={61411, 114633, 2146304065};
+
+#elif SEC_LEVEL==1
+
 static const uint32_t SIFE_NTT_NINV[SIFE_NMODULI]={16756741, 67026961, 2130186241};
+
+#elif SEC_LEVEL==2
+
+static const uint32_t SIFE_NTT_NINV[SIFE_NMODULI]={2147090449, 2146697281, 4293394561};
+
+#endif
 
 void poly_mul_ntt(uint32_t a[SIFE_N], uint32_t b[SIFE_N],uint32_t c[SIFE_N], uint32_t sel){
 
