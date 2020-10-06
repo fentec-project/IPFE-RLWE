@@ -15,7 +15,7 @@
 
 void rlwe_sife_setup(uint32_t mpk[SIFE_L+1][SIFE_NMODULI][SIFE_N], uint32_t msk[SIFE_L][SIFE_NMODULI][SIFE_N]) 
 {
-	int i, j, k;
+	int i, j;
 	uint32_t e_crt[SIFE_NMODULI][SIFE_N];
 	uint32_t msk_ntt[SIFE_N];
 
@@ -42,9 +42,7 @@ void rlwe_sife_setup(uint32_t mpk[SIFE_L+1][SIFE_NMODULI][SIFE_N], uint32_t msk[
 		gaussian_sampler_S1(&state_error, e_crt, SIFE_N);
 		for (j = 0; j < SIFE_NMODULI; ++j) {
 			// Store pk_i in NTT domain but not s_i
-			for (k = 0; k < SIFE_N; ++k) {
-				msk_ntt[k] = msk[i][j][k];
-			}
+			memcpy(msk_ntt, msk[i][j], SIFE_N*sizeof(uint32_t));
 			CT_forward(msk_ntt, j);
 			CT_forward(e_crt[j], j);
 			point_mul(mpk[SIFE_L][j], msk_ntt, mpk[i][j], j);
@@ -122,11 +120,7 @@ void rlwe_sife_keygen(const uint32_t y[SIFE_L], const uint32_t msk[SIFE_L][SIFE_
 
 	crt_convert_generic(y, y_crt, SIFE_L);
 
-	for (i = 0; i < SIFE_NMODULI; ++i) {
-		for (j = 0; j < SIFE_N; ++j) {
-			sk_y[i][j] = 0;
-		}
-	}
+	memset(sk_y, 0, SIFE_NMODULI*SIFE_N*sizeof(uint32_t));
 
 	for (i = 0; i < SIFE_L; ++i) {
 		for (j = 0; j < SIFE_NMODULI; ++j) {
@@ -146,17 +140,11 @@ void rlwe_sife_decrypt_gmp(uint32_t c[SIFE_L+1][SIFE_NMODULI][SIFE_N], const uin
 	uint64_t mac;
 
 	uint32_t c0sy[SIFE_NMODULI][SIFE_N];
-	uint32_t d_y[SIFE_NMODULI][SIFE_N];
+	uint32_t d_y[SIFE_NMODULI][SIFE_N] = {0};
 
 	uint32_t y_crt[SIFE_NMODULI][SIFE_L];
 
 	crt_convert_generic(y, y_crt, SIFE_L);
-
-	for (i = 0; i < SIFE_NMODULI; ++i) {
-		for (j = 0; j < SIFE_N; ++j) {
-			d_y[i][j] = 0;
-		}
-	}
 
 	for (i = 0; i < SIFE_L; ++i) {
 		for (j = 0; j < SIFE_NMODULI; ++j) {
@@ -239,17 +227,11 @@ void rlwe_sife_decrypt_gmp_vec(uint32_t c[SIFE_L+1][SIFE_NMODULI][SIFE_N], const
 	uint64_t mac;
 
 	uint32_t c0sy[SIFE_NMODULI][SIFE_N];
-	uint32_t d_y[SIFE_NMODULI][SIFE_N];
+	uint32_t d_y[SIFE_NMODULI][SIFE_N] = {0};
 
 	uint32_t y_crt[SIFE_NMODULI][SIFE_L];
 
 	crt_convert_generic(y, y_crt, SIFE_L);
-
-	for (i = 0; i < SIFE_NMODULI; ++i) {
-		for (j = 0; j < SIFE_N; ++j) {
-			d_y[i][j] = 0;
-		}
-	}
 
 	for (i = 0; i < SIFE_L; ++i) {
 		for (j = 0; j < SIFE_NMODULI; ++j) {

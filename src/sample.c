@@ -7,6 +7,7 @@
 
 //#define UINT64_RAND_MAX ((RAND_MAX << 32)|RAND_MAX)
 
+/*
 #if SEC_LEVEL==0
 
 #define BUF_SIZE 16384 //buf_size=64*N/8
@@ -23,6 +24,11 @@
 #define AES_ROUNDS 768//AES rounds=96*N/(8*128)
 
 #endif
+*/
+
+#define BUF_SIZE (SIFE_LOGQ_BYTE*SIFE_N/8)
+#define AES_ROUNDS (BUF_SIZE/128)
+
 
 void
 sample_zeros
