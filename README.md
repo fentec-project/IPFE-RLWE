@@ -1,3 +1,4 @@
-# ringLWE-FE-ref
+# Inner-Product Functional Encryption from Ring-Learning With Errors
+Library for software implementation of ring-LWE based inner-production functional encryption (IPFE) 
 
 Software implementation of inner product functional encryption based on Ring-LWE as a proof of concept. The code supports parameter sets for low, medium and high security, and the implementation is optimized using efficient and constant-time Gaussian sampling, a residue number system to break down modular arithmetic, the Number Theoretic Transform for efficient polynomial multiplication and a pseudo-random number generator based on AES-CTR. The functions for setup, key generation, encryption and decryption can be directly used by any application utilizing inner product functional encryption, taking this implementation as the corresponding cryptographic library.
