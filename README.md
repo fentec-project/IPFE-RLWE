@@ -39,6 +39,8 @@ Software implementation of inner product functional encryption based on Ring-LWE
 
 - **arith_rns** implements the modular arithmetic according to the parameters of the system and the chosen moduli
 
+- **rlwe_sife** implements the cryptographic operations using all other modules, and provides the API functions for our IPFE scheme 
+
 ## Usage
 
 The sources can be compiled as a library and only the functions defined in 'rlwe_sife.h' need to be accessed to implement all cryptographic operations.
