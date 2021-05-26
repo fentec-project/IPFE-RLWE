@@ -162,7 +162,7 @@ void sample_polya(unsigned char *seed, uint32_t poly_a[SIFE_NMODULI][SIFE_N])
 		for(j=0;j<8;j++){
 			coeff_t[0]=coeff_t[0] | ((uint64_t) buf[11*i+j]<<(8*j)  );
 		}
-		coeff_t[1]=buf[11*i+8] | buf[11*i+9]<<8 | (buf[11*i+10] & 0x01)<<16; //81 bits
+		coeff_t[1]=buf[11*i+8] | buf[11*i+9]<<8 | (buf[11*i+10] & 0x3f)<<16; //86 bits
 
 		mpz_set_ui(coeff_gmp,coeff_t[1]);
 		mpz_mul_2exp(coeff_gmp, coeff_gmp, 64);
@@ -241,9 +241,9 @@ void sample_polya(unsigned char *seed, uint32_t poly_a[SIFE_NMODULI][SIFE_N])
 
 		coeff_t[0]=0;
 		for(j=0;j<8;j++){
-			coeff_t[0]=coeff_t[0] | ((uint64_t) buf[12*i+j]<<(8*j)  );
+			coeff_t[0]=coeff_t[0] | ((uint64_t) buf[13*i+j]<<(8*j)  );
 		}
-		coeff_t[1]=buf[12*i+8] | buf[12*i+9]<<8 | (buf[12*i+10] & 0x01)<<16 | (buf[12*i+11] & 0x01)<<24; //96 bits
+		coeff_t[1]=buf[13*i+8] | buf[13*i+9]<<8 | (buf[13*i+10])<<16 | (buf[13*i+11])<<24 | (uint64_t)(buf[13*i+12]&0x1f)<<32; //101 bits
 
 		mpz_set_ui(coeff_gmp,coeff_t[1]);
 		mpz_mul_2exp(coeff_gmp, coeff_gmp, 64);
@@ -251,9 +251,10 @@ void sample_polya(unsigned char *seed, uint32_t poly_a[SIFE_NMODULI][SIFE_N])
 
 		if(mpz_cmp(coeff_gmp, Q_gmp)<=0){
 			
-			poly_a[0][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[0]);	//set the reduced values mod q1, q2, q3
+			poly_a[0][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[0]);	//set the reduced values mod q1, q2, q3, q4
 			poly_a[1][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[1]);
 			poly_a[2][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[2]);
+			poly_a[3][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[3]);
 
 			counter++;	//increase the counter
 
@@ -266,12 +267,13 @@ void sample_polya(unsigned char *seed, uint32_t poly_a[SIFE_NMODULI][SIFE_N])
 	while(counter<SIFE_N){
 		aes256ctr_squeezeblocks(small_buf, 1, &state); 
 
-		for(i=0;i<12;i++){
+		for(i=0;i<9;i++){	//one sample requires 13 bytes. Hence as 13*9=117,  maximum 9 samples can be made from 128 bytes
 			coeff_t[0]=0;
 			for(j=0;j<8;j++){
-				coeff_t[0]=coeff_t[0] | ((uint64_t) small_buf[12*i+j]<<(8*j)  );
+				coeff_t[0]=coeff_t[0] | ((uint64_t) small_buf[13*i+j]<<(8*j)  );
 			}
-		coeff_t[1]=buf[12*i+8] | buf[12*i+9]<<8 | (buf[12*i+10] & 0x01)<<16 | (buf[12*i+11] & 0x01)<<24; //96 bits
+
+			coeff_t[1]=buf[13*i+8] | buf[13*i+9]<<8 | (buf[13*i+10])<<16 | (buf[13*i+11])<<24 | (uint64_t)(buf[13*i+12]&0x1f)<<32; //101 bits
 
 			mpz_set_ui(coeff_gmp,coeff_t[1]);
 			mpz_mul_2exp(coeff_gmp, coeff_gmp, 64);
@@ -282,6 +284,7 @@ void sample_polya(unsigned char *seed, uint32_t poly_a[SIFE_NMODULI][SIFE_N])
 				poly_a[0][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[0]);	//set the reduced values mod q1, q2, q3
 				poly_a[1][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[1]);
 				poly_a[2][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[2]);
+				poly_a[3][counter]=mpz_mod_ui(r_gmp, coeff_gmp, SIFE_MOD_Q_I[3]);
 
 				counter++;	//increase the counter
 				if(counter==SIFE_N)

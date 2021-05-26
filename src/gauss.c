@@ -11,9 +11,18 @@
 #if SEC_LEVEL==0
 
 //sigma_1 : 33 sigma_2 : 64880641 sigma_3 : 129761280
+/*
 #define BINARY_SAMPLER_K_S1 39		//sigma_1
 #define BINARY_SAMPLER_K_S2 76391117LL	//sigma_2
 #define BINARY_SAMPLER_K_S3 152782232LL	//sigma_3
+*/
+
+//sigma_1 : 33 sigma_2 : 59473921 sigma_3 : 118947840
+
+#define BINARY_SAMPLER_K_S1 39		//sigma_1
+#define BINARY_SAMPLER_K_S2 70025191LL	//sigma_2
+#define BINARY_SAMPLER_K_S3 140050379LL	//sigma_3
+
 
 #elif SEC_LEVEL==1
 
@@ -416,6 +425,10 @@ void gaussian_sampler_S1(aes256ctr_ctx *state, uint32_t sample[SIFE_NMODULI][SIF
 	uint64_t mod;
 	uint32_t mod1, mod2, mod3;
 
+	#if SEC_LEVEL==2
+	uint32_t mod4;
+	#endif
+
 	while (j < slen)
 	{
 		do
@@ -471,6 +484,13 @@ void gaussian_sampler_S1(aes256ctr_ctx *state, uint32_t sample[SIFE_NMODULI][SIF
 		sample[0][j]=(1-k)*mod1+k*mod_prime(SIFE_MOD_Q_I[0]-mod1, 0);
 		sample[1][j]=(1-k)*mod2+k*mod_prime(SIFE_MOD_Q_I[1]-mod2, 1);
 		sample[2][j]=(1-k)*mod3+k*mod_prime(SIFE_MOD_Q_I[2]-mod3, 2);
+
+
+		#if SEC_LEVEL==2
+			mod4=mod_prime(mod, 3);	
+			sample[3][j]=(1-k)*mod4+k*mod_prime(SIFE_MOD_Q_I[3]-mod4, 3);
+		#endif
+
 		j++;
 
 	}
@@ -497,6 +517,10 @@ void gaussian_sampler_S2(aes256ctr_ctx *state, uint32_t sample[SIFE_NMODULI][SIF
 
 	uint64_t mod;
 	uint32_t mod1, mod2, mod3;
+
+	#if SEC_LEVEL==2
+		uint32_t mod4;	
+	#endif
 
 	while (j < slen)
 	{
@@ -552,6 +576,12 @@ void gaussian_sampler_S2(aes256ctr_ctx *state, uint32_t sample[SIFE_NMODULI][SIF
 		sample[0][j]=(1-k)*mod1+k*mod_prime(SIFE_MOD_Q_I[0]-mod1, 0);
 		sample[1][j]=(1-k)*mod2+k*mod_prime(SIFE_MOD_Q_I[1]-mod2, 1);
 		sample[2][j]=(1-k)*mod3+k*mod_prime(SIFE_MOD_Q_I[2]-mod3, 2);
+
+		#if SEC_LEVEL==2
+			mod4=mod_prime(mod, 3);	
+			sample[3][j]=(1-k)*mod4+k*mod_prime(SIFE_MOD_Q_I[3]-mod4, 3);
+		#endif
+
 		j++;
 
 	}
@@ -577,6 +607,10 @@ void gaussian_sampler_S3(aes256ctr_ctx *state, uint32_t sample[SIFE_NMODULI][SIF
 
 	uint64_t mod;
 	uint32_t mod1, mod2, mod3;
+
+	#if SEC_LEVEL==2
+		uint32_t mod4;	
+	#endif
 
 	while (j < slen)
 	{
@@ -632,6 +666,12 @@ void gaussian_sampler_S3(aes256ctr_ctx *state, uint32_t sample[SIFE_NMODULI][SIF
 		sample[0][j]=(1-k)*mod1+k*mod_prime(SIFE_MOD_Q_I[0]-mod1, 0);
 		sample[1][j]=(1-k)*mod2+k*mod_prime(SIFE_MOD_Q_I[1]-mod2, 1);
 		sample[2][j]=(1-k)*mod3+k*mod_prime(SIFE_MOD_Q_I[2]-mod3, 2);
+
+		#if SEC_LEVEL==2
+			mod4=mod_prime(mod, 3);	
+			sample[3][j]=(1-k)*mod4+k*mod_prime(SIFE_MOD_Q_I[3]-mod4, 3);
+		#endif
+
 		j++;
 	}
 }

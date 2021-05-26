@@ -10,11 +10,11 @@
 
 #if SEC_LEVEL==0
 
-static const char SIFE_Q_str[] = "15131549376305999873";
-#define SIFE_LOGQ_BYTE 64
+static const char SIFE_Q_str[] = "54453379469456060417";
+#define SIFE_LOGQ_BYTE 66			//ceil(log(q)/8)
 #define SIFE_NMODULI 3
-static const uint64_t SIFE_CRT_CONSTS[SIFE_NMODULI]={0, 70580, 1461855532664819506};	//*
-static const uint32_t SIFE_MOD_Q_I[SIFE_NMODULI] = {61441, 114689, 2147352577};//*
+static const uint64_t SIFE_CRT_CONSTS[SIFE_NMODULI]={0, 1956705, 113253237133491840};	//*
+static const uint32_t SIFE_MOD_Q_I[SIFE_NMODULI] = {12289, 8257537, 536608769};//*
 #define SIFE_B_x 2
 #define SIFE_B_y 2
 #define SIFE_L 64
@@ -22,16 +22,16 @@ static const uint32_t SIFE_MOD_Q_I[SIFE_NMODULI] = {61441, 114689, 2147352577};/
 #define SIFE_SIGMA 1
 #define SIFE_P (SIFE_B*SIFE_B*SIFE_L + 1)
 static const char SIFE_P_str[] = "257";
-static const char SIFE_SCALE_M_str[]="58877624032319065";
-static const uint64_t SIFE_SCALE_M_MOD_Q_I[SIFE_NMODULI]={22711, 110672, 1487271434};	//*
+static const char SIFE_SCALE_M_str[]="211880853966755098"; // floor(q/p)
+static const uint64_t SIFE_SCALE_M_MOD_Q_I[SIFE_NMODULI]={8654, 3309440, 415506400};	//*
 
 #elif SEC_LEVEL==1
 
-static const char SIFE_Q_str[] = "2394279167817435158855681";
+static const char SIFE_Q_str[] = "76687145727357674227351553";
 #define SIFE_LOGQ_BYTE 88
 #define SIFE_NMODULI 3
-static const uint64_t SIFE_CRT_CONSTS[SIFE_NMODULI]={0, 44695554, 244872239156431953};	//*
-static const uint32_t SIFE_MOD_Q_I[SIFE_NMODULI] = {16760833, 67043329, 2130706433};//*
+static const uint64_t SIFE_CRT_CONSTS[SIFE_NMODULI]={0, 206923011, 2935204199007202395};	//*
+static const uint32_t SIFE_MOD_Q_I[SIFE_NMODULI] = {16760833, 2147352577, 2130706433};//*
 #define SIFE_B_x 4
 #define SIFE_B_y 16
 #define SIFE_L 785
@@ -39,16 +39,16 @@ static const uint32_t SIFE_MOD_Q_I[SIFE_NMODULI] = {16760833, 67043329, 21307064
 #define SIFE_SIGMA 1
 #define SIFE_P (SIFE_B*SIFE_B*SIFE_L + 1)
 static const char SIFE_P_str[] = "50241";
-static const char SIFE_SCALE_M_str[]="47655882005084197345";
-static const uint64_t SIFE_SCALE_M_MOD_Q_I[SIFE_NMODULI]={11414086, 13786043, 483894834};	//*
+static const char SIFE_SCALE_M_str[]="1526385735302993058007";// floor(q/p)
+static const uint64_t SIFE_SCALE_M_MOD_Q_I[SIFE_NMODULI]={13798054, 441557681, 1912932552};	//*
 
 #elif SEC_LEVEL==2
 
-static const char SIFE_Q_str[] = "19796162090054631350254043137";
-#define SIFE_LOGQ_BYTE 96
-#define SIFE_NMODULI 3
-static const uint64_t SIFE_CRT_CONSTS[SIFE_NMODULI]={0, 2146953901, 8460412124};	//*
-static const uint32_t SIFE_MOD_Q_I[SIFE_NMODULI] = {2147352577, 2146959361 , 4293918721};//*
+static const char SIFE_Q_str[] = "1637410683940770091786553098241";
+#define SIFE_LOGQ_BYTE 104
+#define SIFE_NMODULI 4
+static const uint64_t SIFE_CRT_CONSTS[SIFE_NMODULI]={0, 903170, 1917568766440848807, 4285461029422722560};	//*
+static const uint32_t SIFE_MOD_Q_I[SIFE_NMODULI] = {114689, 1032193, 4293918721, 3221225473};//*
 #define SIFE_B_x 32
 #define SIFE_B_y 32
 #define SIFE_L 1024
@@ -56,8 +56,8 @@ static const uint32_t SIFE_MOD_Q_I[SIFE_NMODULI] = {2147352577, 2146959361 , 429
 #define SIFE_SIGMA 1
 #define SIFE_P (SIFE_B*SIFE_B*SIFE_L + 1)
 static const char SIFE_P_str[] = "1048577";
-static const char SIFE_SCALE_M_str[]="18879073344212805879066";
-static const uint64_t SIFE_SCALE_M_MOD_Q_I[SIFE_NMODULI]={2126372117, 1592386324, 1319825431};	//*
+static const char SIFE_SCALE_M_str[]="1561555025468582747653775";// floor(q/p)
+static const uint64_t SIFE_SCALE_M_MOD_Q_I[SIFE_NMODULI]={17902, 926438, 3160509796, 3131397206};	//*
 
 #endif
 
